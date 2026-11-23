@@ -8,7 +8,7 @@
 | DSI 布线与电源 | DSI 连 LCD 转接板 J3，使用反向 FFC。LCD 转接板 J1 独立 USB 供电；采用主板 5 V 供电时，按手册接 5 V/GND | DSI bus 0、双 lane、1000 Mbps/lane。内部 LDO3 2500 mV 用于 D-PHY。LCD 转接板的 5 V 独立于 D-PHY LDO | 上电前检查 FFC 方向和 DSI/CSI 标签，查看屏幕初始化和背光 |
 | LCD 与初始化 | 套件 7 英寸 1024×600，资料附 EK79007AD 和 LCD 转接板原理图 | 使用固定版 EK79007 驱动、虚拟通道 0、DPI 48 MHz、H porch/pulse 120/10/120、V 20/1/20、RGB565_LE、1 个 DPI FB，保留 DMA2D | 手册确认面板型号和连接，时序来自已锁定的同套件板级定义。实机通过色条确认色序、横屏和边界 |
 | LCD 复位与背光 | J1 GPIO27→转接板 J6 RST_LCD、GPIO26→J6 PWM | GPIO27 低有效；GPIO26 由 LEDC 驱动并在初始化后开启。amend 显式指定两脚 | 两根杜邦线均需接。转接板供电或 PWM 缺失可造成黑屏 |
-| 触摸 I²C 与复位 | V1.6 手册确认电容触摸；板头有 GPIO7/8。所列主板参考设计 ZIP 本次返回 HTML | 旧定义 GT911、I²C0 SDA7/SCL8，候选 7 位地址 0x5D/0x14；无专用复位和中断 GPIO，轮询读取，镜像 X/Y。纯显示版关闭 HID | 现场核对触控控制器、排线与复位走线。复合版仅用于验证上述候选配置。不得为排障盲设复位脚 |
+| 触摸 I²C 与复位 | V1.6 手册确认电容触摸；板头有 GPIO7/8 | GT911、I²C0 SDA7/SCL8，候选 7 位地址 0x5D/0x14；无专用复位和中断 GPIO，轮询读取 | 触控版在实机从 0x5D 读到 GT911 产品 ID 并完成初始化。[实机证据](../evidence/P5/display-touch.txt) |
 | USB 连接 | FS Type-C、Serial/JTAG Type-C、HS Type-C 各有用途。HS Type-A 与 HS Type-C 共享控制器 | 显示切到 OTG UTMI HS，日志和烧录走 Serial/JTAG。HS Type-A 留空 | P3 确认串口，P4 在 Windows 插 HS Type-C 并核对描述符和速度 |
 | 其他外设 | V1.6 带网口、microSD、CSI、音频 | 旧定义的 EMAC TXD1 和 BOOT 共用 GPIO35。amend 跳过 Ethernet、BOOT、SD 和 CSI 设备，未改动屏相关线路 | 最终生成报告无 IO 冲突。复合版的触摸及音频仍需实测 |
 
@@ -18,7 +18,7 @@
 
 可见 DPI 帧 1,228,800 B。硬件 JPEG 解码预留三帧，每帧按 1024×608×2 B 分配，合计 3,735,552 B。六个输入缓冲合计 1,800,000 B。三项约 6.45 MiB，实际 PSRAM 占用还包括对齐、堆、任务和其他对象。IDF 的 JPEG 输入和输出分配使用 PSRAM。启动日志报告可用 PSRAM 堆，板载 32 MB 的运行证据取自 IDF PSRAM 初始化行。
 
-两个版本使用官方 Vendor 协议。Vendor 接口为 0，EP1 OUT 和 EP1 IN，HS 包长各 512 B。纯显示版 303A:2987 仅含 Vendor。复合版 303A:2986 还包含 HID 和 UAC，IDD 绑定 `MI_00`。通过 ELF 中实际编译的描述符进行校验。设备实际连接速度通过 `USB Mount: high-speed` 与 Windows USB 枚举确认。
+三个版本均使用官方 Vendor 协议。Vendor 接口为 0，EP1 OUT 和 EP1 IN，HS 包长各 512 B。纯显示版 303A:2987 提供 Vendor 接口。触控版 303A:2986 增加 HID 接口 1，复合版在相同 PID 下进一步提供 UAC。对 303A:2986，IDD 绑定 `MI_00`。通过 ELF 中实际编译的描述符进行校验。设备实际连接速度通过 `USB Mount: high-speed` 与 Windows USB 枚举确认。
 
 ## 上电色条
 

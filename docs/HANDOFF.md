@@ -1,5 +1,9 @@
 # 交接
 
+**触控版已烧录**。2026-11-23 用含 DCDC 启动修复的 `display-touch` 更新样机应用分区。Windows 识别 1024×600 扩展屏与 GT911 HID 触屏。修正 Windows 映射后，用户确认副屏落点和双指缩放正常。[触控实测](../evidence/P5/display-touch.txt)
+
+## 纯显示阶段
+
 **CODE_READY**。V1.6 的纯显示和复合配置已用锁定的官方示例与 ESP-IDF v5.4.4 构建。纯显示版再次干净构建，产物清单的七个 SHA256 完全一致。
 
 - [烧录包](../out/esp32-p4x-v16-usb-display.zip) 含两种配置、三份烧录二进制、烧录参数、ELF、有效配置及散列。

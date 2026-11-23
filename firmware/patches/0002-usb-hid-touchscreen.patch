@@ -1,0 +1,427 @@
+diff --git a/examples/usb/device/usb_extend_screen/main/app_hid.c b/examples/usb/device/usb_extend_screen/main/app_hid.c
+index 8d85baa..62e9c28 100644
+--- a/examples/usb/device/usb_extend_screen/main/app_hid.c
++++ b/examples/usb/device/usb_extend_screen/main/app_hid.c
+@@ -37,12 +37,12 @@ static void tinyusb_hid_reset_ep(void *arg)
+ // HID callbacks
+ //--------------------------------------------------------------------+
+ 
+-void tinyusb_hid_keyboard_report(hid_report_t report)
++bool app_hid_queue_touch_report(const hid_report_t *report)
+ {
+     if (tud_suspended()) {
+         tud_remote_wakeup();
+     }
+-    xQueueOverwrite(s_tinyusb_hid->hid_queue, &report);
++    return xQueueSend(s_tinyusb_hid->hid_queue, report, 0) == pdPASS;
+ }
+ 
+ // tinyusb_hid_task function to process the HID reports
+@@ -52,35 +52,33 @@ static void tinyusb_hid_task(void *arg)
+     hid_report_t report;
+     uint32_t timeout_count = 0;
+     while (1) {
+-        if (xQueueReceive(s_tinyusb_hid->hid_queue, &report, portMAX_DELAY)) {
++        if (!xQueueReceive(s_tinyusb_hid->hid_queue, &report, portMAX_DELAY)) {
++            continue;
++        }
++        // Hold this report while the endpoint is busy so later presses cannot
++        // replace a pending release.
++        while (tud_mounted()) {
+             if (!tud_hid_ready()) {
+-                xQueueSend(s_tinyusb_hid->hid_queue, &report, 0);
+                 vTaskDelay(pdMS_TO_TICKS(10));
+                 continue;
+             }
+-            if (report.report_id == REPORT_ID_TOUCH) {
+-                ulTaskNotifyTake(pdTRUE, 0);
+-                if (!tud_hid_n_report(0, REPORT_ID_TOUCH, &report.touch_report, sizeof(report.touch_report))) {
+-                    xQueueSend(s_tinyusb_hid->hid_queue, &report, 0);
+-                    vTaskDelay(pdMS_TO_TICKS(10));
+-                    continue;
+-                }
+-            } else {
++            ulTaskNotifyTake(pdTRUE, 0);
++            if (!tud_hid_n_report(0, REPORT_ID_TOUCH, &report, sizeof(report))) {
++                vTaskDelay(pdMS_TO_TICKS(10));
+                 continue;
+             }
+-            if (!ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(100))) {
+-                usbd_defer_func(tinyusb_hid_reset_ep, NULL, false);
+-                xQueueSend(s_tinyusb_hid->hid_queue, &report, 0);
+-                vTaskDelay(pdMS_TO_TICKS(10));
+-                timeout_count++;
+-                if (timeout_count == 1 || timeout_count % 10 == 0) {
+-                    ESP_LOGW(TAG, "HID report timeout, reset endpoint, count=%lu", (unsigned long)timeout_count);
+-                }
+-            } else {
+-                if (timeout_count) {
+-                    xQueueSend(s_tinyusb_hid->hid_queue, &report, 0);
+-                }
++            if (ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(100))) {
+                 timeout_count = 0;
++                break;
++            }
++            if (!tud_mounted()) {
++                break;
++            }
++            usbd_defer_func(tinyusb_hid_reset_ep, NULL, false);
++            vTaskDelay(pdMS_TO_TICKS(10));
++            timeout_count++;
++            if (timeout_count == 1 || timeout_count % 10 == 0) {
++                ESP_LOGW(TAG, "HID report timeout, reset endpoint, count=%lu", (unsigned long)timeout_count);
+             }
+         }
+     }
+@@ -103,6 +101,9 @@ esp_err_t app_hid_init(void)
+     ESP_GOTO_ON_FALSE(s_tinyusb_hid->task_handle, ESP_ERR_NO_MEM, fail, TAG, "xQueueCreate failed");
+     return ESP_OK;
+ fail:
++    if (s_tinyusb_hid->hid_queue) {
++        vQueueDelete(s_tinyusb_hid->hid_queue);
++    }
+     free(s_tinyusb_hid);
+     s_tinyusb_hid = NULL;
+     return ret;
+@@ -123,23 +124,11 @@ void tud_hid_report_complete_cb(uint8_t itf, uint8_t const *report, uint16_t len
+ // Return zero will cause the stack to STALL request
+ uint16_t tud_hid_get_report_cb(uint8_t itf, uint8_t report_id, hid_report_type_t report_type, uint8_t *buffer, uint16_t reqlen)
+ {
+-    // TODO not Implemented
+     (void) itf;
+-    (void) report_id;
+-    (void) report_type;
+-    (void) buffer;
+-    (void) reqlen;
+-
+-    switch (report_id) {
+-    case REPORT_ID_MAX_COUNT: {
++    if (report_type == HID_REPORT_TYPE_FEATURE && report_id == REPORT_ID_MAX_COUNT && reqlen >= 1) {
+         buffer[0] = CONFIG_ESP_LCD_TOUCH_MAX_POINTS;
+         return 1;
+     }
+-    default: {
+-        break;
+-    }
+-    }
+-
+     return 0;
+ }
+ 
+diff --git a/examples/usb/device/usb_extend_screen/main/app_touch.c b/examples/usb/device/usb_extend_screen/main/app_touch.c
+index c6fa14c..fdc1b36 100644
+--- a/examples/usb/device/usb_extend_screen/main/app_touch.c
++++ b/examples/usb/device/usb_extend_screen/main/app_touch.c
+@@ -12,7 +12,6 @@
+ #include "esp_lcd_touch.h"
+ #include "app_lcd.h"
+ #include "app_usb.h"
+-#include "usb_descriptors.h"
+ 
+ static const char *TAG = "app_touch";
+ 
+@@ -32,58 +31,61 @@ static uint16_t app_touch_scale(uint16_t coordinate, uint16_t source_max, uint16
+ 
+ static void app_touch_task(void *arg)
+ {
+-    uint8_t touchpad_cnt = 0;
+-    bool send_press = false;
++    (void)arg;
++    hid_report_t previous = {0};
+     while (1) {
+-        if (esp_lcd_touch_read_data(tp) != ESP_OK) {
+-            vTaskDelay(pdMS_TO_TICKS(20));
++        // Polling GT911 faster can mistake an unready sample for a release.
++        vTaskDelay(pdMS_TO_TICKS(20));
++        if (!tud_mounted()) {
++            previous = (hid_report_t) {0};
+             continue;
+         }
++
++        uint8_t touch_count = 0;
+         esp_lcd_touch_point_data_t touch_points[CONFIG_ESP_LCD_TOUCH_MAX_POINTS] = {0};
+-        if (esp_lcd_touch_get_data(tp, touch_points, &touchpad_cnt,
++        if (esp_lcd_touch_read_data(tp) != ESP_OK ||
++                esp_lcd_touch_get_data(tp, touch_points, &touch_count,
+                                    CONFIG_ESP_LCD_TOUCH_MAX_POINTS) != ESP_OK) {
+-            vTaskDelay(pdMS_TO_TICKS(20));
+             continue;
+         }
+-        hid_report_t report = {0};
+-        if (touchpad_cnt > 0) {
+-            report.report_id = REPORT_ID_TOUCH;
+-            int i = 0;
+-            for (i = 0; i < touchpad_cnt; i++) {
+-                report.touch_report.data[i].index = touch_points[i].track_id;
+-                report.touch_report.data[i].press_down = 1;
+-                report.touch_report.data[i].x = app_touch_scale(touch_points[i].x, s_touch_width,
+-                                                                s_display_width);
+-                report.touch_report.data[i].y = app_touch_scale(touch_points[i].y, s_touch_height,
+-                                                                s_display_height);
+-                report.touch_report.data[i].width = touch_points[i].strength;
+-                report.touch_report.data[i].height = touch_points[i].strength;
+-                /*!< >= LOG_LEVEL_DEBUG */
+-#if CONFIG_LOG_DEFAULT_LEVEL >= 4
+-                /*!< For debug */
+-                printf("(%d: %d, %d. %d) ", touch_points[i].track_id, touch_points[i].x, touch_points[i].y, touch_points[i].strength);
+-#endif
++        touch_report_t current[CONFIG_ESP_LCD_TOUCH_MAX_POINTS] = {0};
++        for (size_t i = 0; i < touch_count; i++) {
++            current[i] = (touch_report_t) {
++                .press_down = 1,
++                .index = touch_points[i].track_id,
++                .x = app_touch_scale(touch_points[i].x, s_touch_width, s_display_width),
++                .y = app_touch_scale(touch_points[i].y, s_touch_height, s_display_height),
++            };
++        }
++
++        // Report each lifted contact once, using its last coordinates.
++        hid_report_t report = previous;
++        bool matched[CONFIG_ESP_LCD_TOUCH_MAX_POINTS] = {0};
++        for (size_t i = 0; i < report.count; i++) {
++            touch_report_t *contact = &report.data[i];
++            contact->press_down = 0;
++            for (size_t j = 0; j < touch_count; j++) {
++                if (contact->index == current[j].index) {
++                    *contact = current[j];
++                    matched[j] = true;
++                    break;
++                }
++            }
++        }
++        for (size_t i = 0; i < touch_count && report.count < CONFIG_ESP_LCD_TOUCH_MAX_POINTS; i++) {
++            if (!matched[i]) {
++                report.data[report.count++] = current[i];
++            }
++        }
++        if (!report.count || !app_hid_queue_touch_report(&report)) {
++            continue;
++        }
++        previous = (hid_report_t) {0};
++        for (size_t i = 0; i < report.count; i++) {
++            if (report.data[i].press_down) {
++                previous.data[previous.count++] = report.data[i];
+             }
+-#if CONFIG_LOG_DEFAULT_LEVEL >= 4
+-            /*!< For debug */
+-            printf("\n");
+-#endif
+-            ESP_LOGD(TAG, "touchpad cnt: %d\n", touchpad_cnt);
+-            report.touch_report.cnt = touchpad_cnt;
+-#if CFG_TUD_HID
+-            tinyusb_hid_keyboard_report(report);
+-#endif
+-            send_press = true;
+-        } else if (send_press) {
+-            send_press = false;
+-            report.report_id = REPORT_ID_TOUCH;
+-#if CFG_TUD_HID
+-            tinyusb_hid_keyboard_report(report);
+-#endif
+-            ESP_LOGD(TAG, "send release %d", touchpad_cnt);
+         }
+-        // Reading from the GT911 at a time shorter than this may result in false reports.
+-        vTaskDelay(20 / portTICK_PERIOD_MS);
+     }
+ }
+ 
+@@ -118,6 +120,9 @@ esp_err_t app_touch_init(void)
+     BaseType_t task_created = xTaskCreate(app_touch_task, "app_touch_task", 4096, NULL,
+                                           CONFIG_TOUCH_TASK_PRIORITY, NULL);
+     ESP_RETURN_ON_FALSE(task_created == pdPASS, ESP_ERR_NO_MEM, TAG, "create touch task failed");
++    ESP_LOGI(TAG, "Touch ready: %s %ux%u, display %ux%u, %u contacts",
++             touch_config->chip, s_touch_width, s_touch_height, s_display_width, s_display_height,
++             CONFIG_ESP_LCD_TOUCH_MAX_POINTS);
+     return ESP_OK;
+ #endif
+ }
+diff --git a/examples/usb/device/usb_extend_screen/main/include/app_usb.h b/examples/usb/device/usb_extend_screen/main/include/app_usb.h
+index 8f4b33d..e97b5f6 100644
+--- a/examples/usb/device/usb_extend_screen/main/include/app_usb.h
++++ b/examples/usb/device/usb_extend_screen/main/include/app_usb.h
+@@ -20,20 +20,16 @@ typedef struct {
+     uint8_t index;
+     uint16_t x;
+     uint16_t y;
+-    uint16_t width;
+-    uint16_t height;
+ } __attribute__((packed)) touch_report_t;
+ 
+ _Static_assert(CONFIG_ESP_LCD_TOUCH_MAX_POINTS == 5, "CONFIG_ESP_LCD_TOUCH_MAX_POINTS must be 5");
+ 
+ typedef struct {
+-    uint32_t report_id;    // Report identifier
+-    struct {
+-        touch_report_t data[CONFIG_ESP_LCD_TOUCH_MAX_POINTS];  // Touch report
+-        // uint16_t scan_time;
+-        uint8_t cnt;
+-    } touch_report;
++    touch_report_t data[CONFIG_ESP_LCD_TOUCH_MAX_POINTS];
++    uint8_t count;
+ } __attribute__((packed)) hid_report_t;
++
++_Static_assert(sizeof(hid_report_t) == 31, "HID touchscreen payload must match the report descriptor");
+ #endif
+ 
+ /**
+@@ -46,12 +42,7 @@ typedef struct {
+ esp_err_t app_usb_init(void);
+ 
+ #if CONFIG_HID_TOUCH_ENABLE
+-/**
+- * @brief Report key press in the keyboard, using array here
+- *
+- * @param report hid report data
+- */
+-void tinyusb_hid_keyboard_report(hid_report_t report);
++bool app_hid_queue_touch_report(const hid_report_t *report);
+ 
+ esp_err_t app_hid_init(void);
+ #endif
+diff --git a/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.c b/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.c
+index 695ae98..1dd14f3 100644
+--- a/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.c
++++ b/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.c
+@@ -86,7 +86,8 @@ uint8_t const *tud_descriptor_device_cb(void)
+ // HID Report Descriptor
+ //--------------------------------------------------------------------+
+ static uint8_t desc_hid_report[] = {
+-    TUD_HID_REPORT_DESC_TOUCH_SCREEN(REPORT_ID_TOUCH, 0, 0),
++    // 7-inch 1024:600 panel, in hundredths of an inch.
++    TUD_HID_REPORT_DESC_TOUCH_SCREEN(REPORT_ID_TOUCH, 0, 0, 604, 354),
+ };
+ 
+ uint8_t const * tud_hid_descriptor_report_cb(uint8_t instance)
+@@ -179,21 +180,20 @@ esp_err_t usb_descriptors_init(uint16_t width, uint16_t height)
+ 
+ #if CFG_TUD_HID
+     unsigned logical_max_count = 0;
+-    unsigned physical_max_count = 0;
+-    for (size_t i = 0; i + 2 < sizeof(desc_hid_report); i++) {
+-        uint16_t value;
+-        if (desc_hid_report[i] == 0x26) {
+-            value = (logical_max_count++ % 2 == 0) ? width : height;
+-        } else if (desc_hid_report[i] == 0x46) {
+-            value = (physical_max_count++ % 2 == 0) ? width : height;
+-        } else {
+-            continue;
++    for (size_t i = 0; i < sizeof(desc_hid_report);) {
++        uint8_t item = desc_hid_report[i];
++        size_t size = item & 3;
++        size = size == 3 ? 4 : size;
++        ESP_RETURN_ON_FALSE(item != 0xfe && i + size < sizeof(desc_hid_report),
++                            ESP_ERR_INVALID_STATE, "usb_desc", "invalid HID report item");
++        if (item == 0x26) {
++            uint16_t value = (logical_max_count++ % 2 == 0) ? width : height;
++            desc_hid_report[i + 1] = value & 0xff;
++            desc_hid_report[i + 2] = value >> 8;
+         }
+-        desc_hid_report[i + 1] = value & 0xff;
+-        desc_hid_report[i + 2] = value >> 8;
+-        i += 2;
++        i += 1 + size;
+     }
+-    ESP_RETURN_ON_FALSE(logical_max_count == 10 && physical_max_count == 10,
++    ESP_RETURN_ON_FALSE(logical_max_count == 2 * CONFIG_ESP_LCD_TOUCH_MAX_POINTS,
+                         ESP_ERR_INVALID_STATE, "usb_desc", "unexpected HID report layout");
+ #endif
+ 
+diff --git a/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.h b/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.h
+index fd344cf..f9a22e6 100644
+--- a/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.h
++++ b/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.h
+@@ -69,7 +69,7 @@ enum {
+ };
+ 
+ #if CFG_TUD_HID
+-#define TUD_HID_REPORT_DESC_TOUCH_SCREEN(report_id, width, height) \
++#define TUD_HID_REPORT_DESC_TOUCH_SCREEN(report_id, width, height, physical_width, physical_height) \
+     HID_USAGE_PAGE   ( HID_USAGE_PAGE_DIGITIZER        ),\
+     /* USAGE (Touch Screen) */\
+     HID_USAGE        ( 0x04                       ),\
+@@ -78,26 +78,26 @@ enum {
+       HID_REPORT_ID ( report_id                 ) \
+       /* Input */ \
+       /* Finger */ \
+-      FINGER_USAGE(width, height) \
+-      FINGER_USAGE(width, height) \
+-      FINGER_USAGE(width, height) \
+-      FINGER_USAGE(width, height) \
+-      FINGER_USAGE(width, height) \
++      FINGER_USAGE(width, height, physical_width, physical_height) \
++      FINGER_USAGE(width, height, physical_width, physical_height) \
++      FINGER_USAGE(width, height, physical_width, physical_height) \
++      FINGER_USAGE(width, height, physical_width, physical_height) \
++      FINGER_USAGE(width, height, physical_width, physical_height) \
+       /* Contact count */\
+       HID_USAGE     ( 0x54                                   ),\
+-      HID_LOGICAL_MAX ( 127                                    ),\
++      HID_LOGICAL_MAX ( CONFIG_ESP_LCD_TOUCH_MAX_POINTS        ),\
+       HID_REPORT_COUNT( 1                                    ),\
+       HID_REPORT_SIZE ( 8                                    ),\
+       HID_INPUT      ( HID_DATA | HID_VARIABLE | HID_ABSOLUTE ),\
+     HID_REPORT_ID ( report_id + 1             ) \
+     HID_USAGE (0x55              ),\
+     HID_REPORT_COUNT (1               ),\
+-    HID_LOGICAL_MAX (0x10              ),\
++    HID_LOGICAL_MAX ( CONFIG_ESP_LCD_TOUCH_MAX_POINTS          ),\
+     HID_FEATURE ( HID_DATA | HID_VARIABLE | HID_ABSOLUTE ),\
+     HID_COLLECTION_END \
+ 
+-#define FINGER_USAGE(width, height) \
+-    HID_USAGE     ( 0x42                                   ),\
++#define FINGER_USAGE(width, height, physical_width, physical_height) \
++    HID_USAGE     ( 0x22                                   ),\
+     HID_COLLECTION  ( HID_COLLECTION_LOGICAL                 ),\
+     HID_USAGE     ( 0x42                                   ),\
+     HID_LOGICAL_MIN ( 0x00                                 ),\
+@@ -109,8 +109,10 @@ enum {
+     HID_INPUT      ( HID_CONSTANT | HID_ARRAY | HID_ABSOLUTE ),\
+     HID_REPORT_SIZE ( 8                                    ),\
+     HID_USAGE     ( 0x51                                   ),\
++    HID_LOGICAL_MAX ( 0xff                                 ),\
+     HID_REPORT_COUNT( 1                                    ),\
+     HID_INPUT      ( HID_DATA | HID_VARIABLE | HID_ABSOLUTE ),\
++    HID_PUSH, \
+     HID_USAGE_PAGE ( HID_USAGE_PAGE_DESKTOP                 ),\
+     HID_LOGICAL_MAX_N ( width, 2                           ),\
+     HID_REPORT_SIZE ( 16                                    ),\
+@@ -120,20 +122,14 @@ enum {
+     /* X */\
+     HID_USAGE     ( 0x30                                   ),\
+     HID_PHYSICAL_MIN ( 0                                   ),\
+-    HID_PHYSICAL_MAX_N ( width, 2                           ),\
++    HID_PHYSICAL_MAX_N ( physical_width, 2                  ),\
+     HID_INPUT      ( HID_DATA | HID_VARIABLE | HID_ABSOLUTE ),\
+     /* Y */\
+     HID_LOGICAL_MAX_N ( height, 2                           ),\
+-    HID_PHYSICAL_MAX_N ( height, 2                            ),\
++    HID_PHYSICAL_MAX_N ( physical_height, 2                 ),\
+     HID_USAGE     ( 0x31                                   ),\
+     HID_INPUT      ( HID_DATA | HID_VARIABLE | HID_ABSOLUTE ),\
+-    HID_USAGE_PAGE ( HID_USAGE_PAGE_DIGITIZER               ),\
+-    /* Width */\
+-    HID_USAGE     ( 0x48                                   ),\
+-    /* Height */\
+-    HID_USAGE     ( 0x49                                   ),\
+-    HID_REPORT_COUNT( 2                                    ),\
+-    HID_INPUT      ( HID_DATA | HID_VARIABLE | HID_ABSOLUTE ),\
++    HID_POP, \
+     HID_COLLECTION_END, \
+ 
+ #endif
+diff --git a/examples/usb/device/usb_extend_screen/main/usb_extend_screen.c b/examples/usb/device/usb_extend_screen/main/usb_extend_screen.c
+index 63fc249..e51df10 100644
+--- a/examples/usb/device/usb_extend_screen/main/usb_extend_screen.c
++++ b/examples/usb/device/usb_extend_screen/main/usb_extend_screen.c
+@@ -28,6 +28,9 @@ void app_main(void)
+              heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
+     ESP_ERROR_CHECK(app_usb_init());
+ #if CONFIG_HID_TOUCH_ENABLE
+-    ESP_ERROR_CHECK(app_touch_init());
++    esp_err_t touch_status = app_touch_init();
++    if (touch_status != ESP_OK) {
++        ESP_LOGW(TAG, "Touch unavailable (%s); USB display remains active", esp_err_to_name(touch_status));
++    }
+ #endif
+ }

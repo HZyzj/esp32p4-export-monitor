@@ -3,7 +3,7 @@ set -euo pipefail
 source "$(dirname -- "${BASH_SOURCE[0]}")/env.sh"
 
 usage() {
-    printf 'Usage: %s identify PORT\n       %s flash PORT EXPECTED_MAC [display-only|composite]\n' "$0" "$0"
+    printf 'Usage: %s identify PORT\n       %s flash PORT EXPECTED_MAC [display-only|display-touch|composite]\n' "$0" "$0"
 }
 if [[ "${1:-}" == --help ]]; then usage; exit; fi
 if (( $# < 2 || $# > 4 )); then usage >&2; exit 2; fi
@@ -16,7 +16,7 @@ case "$mode" in
     flash)
         [[ "$expected_mac" =~ ^([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}$ ]] ||
             fail "请输入已识别设备的完整 MAC。"
-        case "$profile" in display-only|composite) ;; *) fail "未知固件配置 $profile" ;; esac
+        case "$profile" in display-only|display-touch|composite) ;; *) fail "未知固件配置 $profile" ;; esac
         ;;
     *) usage >&2; exit 2 ;;
 esac

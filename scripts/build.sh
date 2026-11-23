@@ -8,15 +8,15 @@ while (($#)); do
     case "$1" in
         --clean) clean=true; shift ;;
         --profile)
-            [[ $# -ge 2 ]] || fail "请指定 --profile display-only 或 composite。"
+            [[ $# -ge 2 ]] || fail "请指定 --profile display-only、display-touch 或 composite。"
             profile="$2"
             shift 2
             ;;
-        -h|--help) printf 'Usage: %s [--clean] [--profile display-only|composite]\n' "$0"; exit ;;
+        -h|--help) printf 'Usage: %s [--clean] [--profile display-only|display-touch|composite]\n' "$0"; exit ;;
         *) fail "未知参数 $1" ;;
     esac
 done
-case "$profile" in display-only|composite) ;; *) fail "未知固件配置 $profile" ;; esac
+case "$profile" in display-only|display-touch|composite) ;; *) fail "未知固件配置 $profile" ;; esac
 case "$P4_ROOT" in /mnt/[A-Za-z]/*) fail "请将目录放在 WSL 的 Linux 文件系统中。" ;; esac
 
 mkdir -p "$P4_ROOT/out" "$P4_ROOT/evidence/P2"
@@ -32,8 +32,12 @@ submodules=$(git -C "$IDF_PATH" submodule status --recursive)
 if grep -E '^[-+U]' <<< "$submodules"; then
     fail "ESP-IDF 子模块状态有误，请运行 scripts/bootstrap.sh。"
 fi
-git -C "$IDF_PATH" diff --exit-code HEAD --quiet ||
-    fail "ESP-IDF checkout 有本地修改，请使用锁定版本的干净 checkout。"
+if ! git -C "$IDF_PATH" diff --exit-code HEAD --quiet; then
+    idf_patch="$P4_ROOT/firmware/patches/idf-0001-esp32p4-dcdc-startup.patch"
+    git -C "$IDF_PATH" diff --binary --no-ext-diff HEAD | cmp -s "$idf_patch" - ||
+        fail "ESP-IDF checkout 含有锁定的 DCDC 补丁之外的改动。"
+    printf 'ESP-IDF DCDC startup patch verified.\n'
+fi
 activate_idf
 python -c "from importlib.metadata import version; import sys; sys.exit(version('esp-bmgr-assist') != '$BMGR_ASSIST_VERSION')" ||
     fail "esp-bmgr-assist 版本不匹配，请运行 scripts/bootstrap.sh。"
@@ -44,12 +48,16 @@ if [[ ! -e "$P4_WORK" ]]; then
     git -C "$P4_IOT" worktree add --detach "$P4_WORK" "$IOT_REV"
 fi
 check_revision "$P4_WORK" "$IOT_REV"
-patch="$P4_ROOT/firmware/patches/0001-lcd-and-usb-diagnostics.patch"
-if git -C "$P4_WORK" diff --quiet HEAD --; then
-    git -C "$P4_WORK" apply --check "$patch"
-    git -C "$P4_WORK" apply "$patch"
-fi
-git -C "$P4_WORK" diff --binary --no-ext-diff HEAD | cmp -s "$patch" - ||
+# Build the expected patched tree in a separate index to recognize older overlays.
+patch_index="$P4_ROOT/out/.usb-display-patch-index"
+GIT_INDEX_FILE="$patch_index" git -C "$P4_WORK" read-tree HEAD
+for patch in "$P4_ROOT"/firmware/patches/0*.patch; do
+    if GIT_INDEX_FILE="$patch_index" git -C "$P4_WORK" diff --quiet --; then
+        git -C "$P4_WORK" apply "$patch"
+    fi
+    GIT_INDEX_FILE="$patch_index" git -C "$P4_WORK" apply --cached "$patch"
+done
+GIT_INDEX_FILE="$patch_index" git -C "$P4_WORK" diff --quiet -- ||
     fail "工作树包含额外改动，请保留这些改动后用干净的构建工作树重试。"
 
 cd "$P4_EXAMPLE"

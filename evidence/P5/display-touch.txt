@@ -1,0 +1,24 @@
+2026-11-23 | ESP32-P4X-Function-EV-Board V1.6 / ESP32-P4 Rev 3.2
+
+Build: display-touch, ESP-IDF v5.4.4 with the pinned DCDC startup patch.
+USB ELF descriptors: 303A:2986, Vendor interface 0 and HID touchscreen interface 1.
+Application SHA256: 6e85ac2a77383104985b9d1e90bb2c613968e6591ce6ddb5bfe2c3240aab1907
+Build and ELF checks also passed for display-only and composite.
+
+The on-device partition table matched the build. The previous 1 MiB application
+partition was backed up and hashed. Only the application was written at 0x10000
+and esptool verified the write hash. Target identities and raw logs are private.
+
+Startup: 1024x600 RGB565_LE, 32 MiB PSRAM, USB High-Speed.
+GT911 product register: 39 31 31 (ASCII 911), I2C 7-bit address 0x5D.
+Touch initialized at 1024x600 with five contact slots.
+Windows reported the IDD display and HID touchscreen healthy, with an active
+1024x600 extended display. The user confirmed touch events, initially on the
+1920x1080 primary display. The Windows pointer API confirmed that mapping.
+The previous Windows mapping was backed up. The association for this HID
+interface was updated to the 1024x600 display. After restarting the touch
+device, the Windows pointer API reported five contact slots with that display's
+desktop rectangle.
+After the association change, the user confirmed correct touch landing on the
+secondary panel and successful two-finger pinch zoom. The maximum five-contact
+count was reported by Windows and was not exercised by this physical test.

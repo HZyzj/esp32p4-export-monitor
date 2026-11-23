@@ -43,3 +43,9 @@ Windows 11 已绑定用户安装的 IDD 1.2.25.2（`oem2.inf`），设备状态�
 可以用 PowerShell 运行 [Windows USB 链路检查脚本](../scripts/verify_windows_usb.ps1)。脚本仅针对纯显示版的设备 ID，通过其上一级集线器读取已协商速率和当前配置值。[Microsoft USB 集线器接口](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/usbioctl/ni-usbioctl-ioctl_usb_get_node_connection_information_ex)
 
 当前实测使用 [30 秒窗口测试脚本](../scripts/smoke_windows_display.ps1)，会将专用测试窗口从主屏移到唯一的 1024×600 副屏，再自动关闭。
+
+## 触控映射
+
+1. 烧录 `display-touch`，在 Windows 设备管理器确认显示适配器和 **符合 HID 标准的触摸屏**均处于正常状态。触控使用复合设备 `303A:2986` 的接口 1，显示驱动绑定接口 0。
+2. 保持扩展显示，打开 **控制面板 → 硬件和声音 → 平板电脑设置 → 设置**。如果提示出现在主屏，按 Enter 跳到 1024×600 副屏。等提示出现在副屏后，点一下副屏中心，再按 Enter 退出剩余提示。[Microsoft 触控映射说明](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/digitizer-display-mapping)
+3. 在副屏点四角和中心，再做双指缩放或双指按下后逐个抬起，确认方向、边缘定位和抬起均正常。记录结果到 [T04 验收](ACCEPTANCE.md)。
