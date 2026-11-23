@@ -1,0 +1,46 @@
+esptool.py v4.14.0
+Serial port /dev/ttyACM0
+WARNING: Pre-connection option "no_reset" was selected. Connection may fail if the chip is not in bootloader or flasher stub mode.
+Connecting...
+Chip is ESP32-P4 (revision v3.2)
+Features: High-Performance MCU
+Crystal is 40MHz
+USB mode: USB-Serial/JTAG
+MAC: <MAC>
+Using the new stub flasher.
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00002000 to 0x00007fff...
+Flash will be erased from 0x00010000 to 0x0008bfff...
+SHA digest in image updated
+Compressed 22688 bytes to 13944...
+Writing at 0x00002000... (100 %)
+Wrote 22688 bytes (13944 compressed) at 0x00002000 in 0.3 seconds (effective 650.6 kbit/s)...
+Hash of data verified.
+Compressed 507824 bytes to 266405...
+Writing at 0x00010000... (5 %)
+Writing at 0x0001eca4... (11 %)
+Writing at 0x0002b108... (17 %)
+Writing at 0x0003124a... (23 %)
+Writing at 0x0003773d... (29 %)
+Writing at 0x0003e8e0... (35 %)
+Writing at 0x00044f2c... (41 %)
+Writing at 0x0004b73e... (47 %)
+Writing at 0x00052196... (52 %)
+Writing at 0x00059a0a... (58 %)
+Writing at 0x0006034f... (64 %)
+Writing at 0x00067f8d... (70 %)
+Writing at 0x0006e356... (76 %)
+Writing at 0x00075e76... (82 %)
+Writing at 0x0007c777... (88 %)
+Writing at 0x00082a44... (94 %)
+Writing at 0x00088f34... (100 %)
+Wrote 507824 bytes (266405 compressed) at 0x00010000 in 2.8 seconds (effective 1442.1 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting with a watchdog...

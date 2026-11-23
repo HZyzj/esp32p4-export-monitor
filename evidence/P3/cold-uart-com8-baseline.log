@@ -1,0 +1,99 @@
+COM8 capture started 2026-11-23T14:27:22.5492004+08:00
+  0.396 ESP-ROM:esp32p4-eco7-20260109
+  0.408 Build:Jan  9 2026
+  0.408 rst:0x10 (CHIP_LP_WDT_RESET),boot:0xf (SPI_FAST_FLASH_BOOT)
+  0.449 SPI mode:DIO, clock div:1
+  0.449 load:0x4ffb60d0,len:0x1308
+  0.449 load:0x4ffac2c0,len:0xd1c
+  0.449 load:0x4ffaefc0,len:0x31c8
+  0.449 entry 0x4ffac2c0
+  3.468 W (25) pmu_param: hp_cali_dbias ESP-ROM:esp32p4-eco7-20260109
+  3.473 Build:Jan  9 2026
+  3.500 rst:0x10 (CHIP_LP_WDT_RESET),boot:0xf (SPI_FAST_FLASH_BOOT)
+  3.500 SPI mode:DIO, clock div:1
+  3.500 load:0x4ffb60d0,len:0x1308
+  3.500 load:0x4ffac2c0,len:0xd1c
+  3.500 load:0x4ffaefc0,len:0x31c8
+  3.500 entry 0x4ffac2c0
+  6.550 W (25) pmu_param: hp_cali_dbias?ESP-ROM:esp32p4-eco7-20260109
+  6.551 Build:Jan  9 2026
+  6.581 rst:0x10 (CHIP_LP_WDT_RESET),boot:0xf (SPI_FAST_FLASH_BOOT)
+  6.581 SPI mode:DIO, clock div:1
+  6.581 load:0x4ffb60d0,len:0x1308
+  6.582 load:0x4ffac2c0,len:0xd1c
+  6.582 load:0x4ffaefc0,len:0x31c8
+  6.582 entry 0x4ffac2c0
+  9.646 W (25) pmu_param: hp_cali_dbias?ESP-ROM:esp32p4-eco7-20260109
+  9.646 Build:Jan  9 2026
+  9.647 rst:0x10 (CHIP_LP_WDT_RESET),boot:0xf (SPI_FAST_FLASH_BOOT)
+  9.647 SPI mode:DIO, clock div:1
+  9.647 load:0x4ffb60d0,len:0x1308
+  9.678 load:0x4ffac2c0,len:0xd1c
+  9.678 load:0x4ffaefc0,len:0x31c8
+  9.678 entry 0x4ffac2c0
+ 12.733 W (25) pmu_param: hp_cali_dbias ESP-ROM:esp32p4-eco7-20260109
+ 12.734 Build:Jan  9 2026
+ 12.734 rst:0x10 (CHIP_LP_WDT_RESET),boot:0xf (SPI_FAST_FLASH_BOOT)
+ 12.734 SPI mode:DIO, clock div:1
+ 12.734 load:0x4ffb60d0,len:0x1308
+ 12.734 load:0x4ffac2c0,len:0xd1c
+ 12.734 load:0x4ffaefc0,len:0x31c8
+ 12.764 entry 0x4ffac2c0
+ 15.806 W (25) pmu_param: hp_cali_dbias?ESP-ROM:esp32p4-eco7-20260109
+ 15.806 Build:Jan  9 2026
+ 15.806 rst:0x10 (CHIP_LP_WDT_RESET),boot:0xf (SPI_FAST_FLASH_BOOT)
+ 15.838 SPI mode:DIO, clock div:1
+ 15.838 load:0x4ffb60d0,len:0x1308
+ 15.838 load:0x4ffac2c0,len:0xd1c
+ 15.838 load:0x4ffaefc0,len:0x31c8
+ 15.838 entry 0x4ffac2c0
+ 18.882 W (25) pmu_param: hp_cali_dbias?ESP-ROM:esp32p4-eco7-20260109
+ 18.912 Build:Jan  9 2026
+ 18.912 rst:0x10 (CHIP_LP_WDT_RESET),boot:0xf (SPI_FAST_FLASH_BOOT)
+ 18.912 SPI mode:DIO, clock div:1
+ 18.912 load:0x4ffb60d0,len:0x1308
+ 18.912 load:0x4ffac2c0,len:0xd1c
+ 18.912 load:0x4ffaefc0,len:0x31c8
+ 18.912 entry 0x4ffac2c0
+ 21.975 W (25) pmu_param: hp_cali_dbias?ESP-ROM:esp32p4-eco7-20260109
+ 21.975 Build:Jan  9 2026
+ 21.975 rst:0x10 (CHIP_LP_WDT_RESET),boot:0xf (SPI_FAST_FLASH_BOOT)
+ 22.007 SPI mode:DIO, clock div:1
+ 22.007 load:0x4ffb60d0,len:0x1308
+ 22.008 load:0x4ffac2c0,len:0xd1c
+ 22.008 load:0x4ffaefc0,len:0x31c8
+ 22.008 entry 0x4ffac2c0
+ 25.060 W (25) pmu_param: hp_cali_dbias ESP-ROM:esp32p4-eco7-20260109
+ 25.060 Build:Jan  9 2026
+ 25.093 rst:0x10 (CHIP_LP_WDT_RESET),boot:0xf (SPI_FAST_FLASH_BOOT)
+ 25.093 SPI mode:DIO, clock div:1
+ 25.093 load:0x4ffb60d0,len:0x1308
+ 25.093 load:0x4ffac2c0,len:0xd1c
+ 25.093 load:0x4ffaefc0,len:0x31c8
+ 25.093 entry 0x4ffac2c0
+ 28.159 W (25) pmu_param: hp_cali_dbias?ESP-ROM:esp32p4-eco7-20260109
+ 28.159 Build:Jan  9 2026
+ 28.159 rst:0x10 (CHIP_LP_WDT_RESET),boot:0xf (SPI_FAST_FLASH_BOOT)
+ 28.159 SPI mode:DIO, clock div:1
+ 28.159 load:0x4ffb60d0,len:0x1308
+ 28.159 load:0x4ffac2c0,len:0xd1c
+ 28.159 load:0x4ffaefc0,len:0x31c8
+ 28.160 entry 0x4ffac2c0
+ 31.230 W (25) pmu_param: hp_cali_dbias?ESP-ROM:esp32p4-eco7-20260109
+ 31.230 Build:Jan  9 2026
+ 31.262 rst:0x10 (CHIP_LP_WDT_RESET),boot:0xf (SPI_FAST_FLASH_BOOT)
+ 31.262 SPI mode:DIO, clock div:1
+ 31.262 load:0x4ffb60d0,len:0x1308
+ 31.262 load:0x4ffac2c0,len:0xd1c
+ 31.262 load:0x4ffaefc0,len:0x31c8
+ 31.262 entry 0x4ffac2c0
+ 34.314 W (25) pmu_param: hp_cali_dbias?ESP-ROM:esp32p4-eco7-20260109
+ 34.314 Build:Jan  9 2026
+ 34.345 rst:0x10 (CHIP_LP_WDT_RESET),boot:0xf (SPI_FAST_FLASH_BOOT)
+ 34.345 SPI mode:DIO, clock div:1
+ 34.345 load:0x4ffb60d0,len:0x1308
+ 34.345 load:0x4ffac2c0,len:0xd1c
+ 34.346 load:0x4ffaefc0,len:0x31c8
+ 34.346 entry 0x4ffac2c0
+Partial: W (25) pmu_param: hp_cali_dbias?
+COM8 capture ended 2026-11-23T14:27:59.5685775+08:00

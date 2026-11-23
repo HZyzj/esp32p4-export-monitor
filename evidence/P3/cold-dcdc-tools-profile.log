@@ -1,0 +1,8 @@
+Updating /home/yzj/project/esp32p4-mon/upstream/.idf-tools/idf-env.json
+Selected targets are: esp32p4
+Current system platform: linux-amd64
+Installing tools: riscv32-esp-elf-gdb, riscv32-esp-elf, openocd-esp32, esp-rom-elfs
+Skipping riscv32-esp-elf-gdb@16.3_20250913 (already installed)
+Skipping riscv32-esp-elf@esp-14.2.0_20260121 (already installed)
+Skipping openocd-esp32@v0.12.0-esp32-20260304 (already installed)
+Skipping esp-rom-elfs@20241011 (already installed)

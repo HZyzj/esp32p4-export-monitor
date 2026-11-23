@@ -1,0 +1,12 @@
+2026-11-23 cold startup investigation
+User observed black LCD after a real power-off/on. Mainboard 5 V indicator was lit. Retested with Serial/JTAG and restored LCD power while HS OTG was disconnected. LCD remained black.
+Initial Windows PnP sample: no 303A:2987 and one active screen. Serial/JTAG was not connected according to the current usbipd list.
+Manual BOOT plus RESET restored ROM USB Serial/JTAG on the same ESP32-P4 Rev 3.2. MAC matched the unit originally programmed.
+USB serial monitor reset after manual BOOT stayed in DOWNLOAD mode. A separate physical RESET disconnected Serial/JTAG and it did not reappear.
+esptool verify_flash on the published bootloader, partition table and app: all three digests matched. Watchdog full reset exited 0, then no Espressif device remained present and user reported black LCD.
+Diagnostic DIO/40 MHz profile built successfully, with extra bootloader logging. Only the bootloader and the app were written; both write verifications passed. After watchdog full reset, no Espressif USB node was present. User independently reported COM6 only under Persisted.
+A 3.3 V UART0 adapter is not available on site. No early normal-boot UART0 trace has been captured.
+Preflash image SHA256 matched. Its bootloader header specifies DIO/80 MHz, version string v5.5.2-710-gd8d422d6a7c-dirty, and original partition table at 0x9000. Current published bootloader uses ESP-IDF v5.4.4 and partition table 0x8000. These are observed differences, not established causes.
+The DIO/40 MHz test does not establish that the issue is a Windows driver problem or that Flash is corrupt.
+
+At the user’s request, restored the published DIO boot header / 80 MHz release bootloader and display-only application. Both writes passed digest checks. The partition table was untouched during the diagnostic and rollback. The subsequent esptool ROM soft-launch attempt failed with a SPI pin configuration command error. COM6 remained attached in ROM mode; normal startup was not established. See cold-rollback-release.log and cold-rollback-warm-launch.log.

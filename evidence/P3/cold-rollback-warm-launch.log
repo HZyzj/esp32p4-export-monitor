@@ -1,0 +1,12 @@
+esptool.py v4.14.0
+Serial port /dev/ttyACM0
+WARNING: Pre-connection option "no_reset" was selected. Connection may fail if the chip is not in bootloader or flasher stub mode.
+Connecting...
+Chip is ESP32-P4 (revision v3.2)
+Features: High-Performance MCU
+Crystal is 40MHz
+USB mode: USB-Serial/JTAG
+MAC: <MAC>
+Enabling default SPI flash mode...
+
+A fatal error occurred: Failed to configure SPI flash pins (result was C000: Bad data length)
