@@ -1,0 +1,14 @@
+Profile: display-only | ESP32-P4 revision 3.00–3.99 | 16 MB flash | Hex PSRAM | Serial/JTAG console
+Advertised JPEG quality: 6; FPS cap: 60
+USB ELF descriptor: 303A:2987, classes={0: 255}, vendor bulk OUT 01 / IN 81 at 512 B
+Flash settings: {"flash_freq": "80m", "flash_mode": "dio", "flash_size": "16MB"}
+0x2000 bootloader/bootloader.bin
+0x10000 usb_touch_screen.bin
+0x8000 partition_table/partition-table.bin
+    21056 B  063e1a7d6076fcea9b021e929cb46ab43d8d9d88901101d1ba265bd8d7ca2a1b  /home/yzj/project/esp32p4-mon/out/display-only/bootloader/bootloader.bin
+   507936 B  5cc4248be9830bdb054442a3c0bc27d70af6370f4da2895d2676c163a7e906a1  /home/yzj/project/esp32p4-mon/out/display-only/usb_touch_screen.bin
+     3072 B  7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820  /home/yzj/project/esp32p4-mon/out/display-only/partition_table/partition-table.bin
+      931 B  db499e24e080e4bcd6a47595601adbc083a8bdca3ecd18864b6bc92780633ede  /home/yzj/project/esp32p4-mon/out/display-only/flasher_args.json
+      157 B  01efa45ced6267ba9263f58240f17433bd8b8ce61aced6e892320aa1496efd64  /home/yzj/project/esp32p4-mon/out/display-only/flash_args
+    76582 B  7dc00d5a4dae92f487de6c1bd2a1bcee1565cb7f68b97a70953a71856c99cce7  /home/yzj/project/esp32p4-mon/out/display-only/sdkconfig
+  8812096 B  44434253e1feea2a40c6ecd4d2b5339a7b97fa6563d6c1c1d3355a78d4e2bbc4  /home/yzj/project/esp32p4-mon/out/display-only/usb_touch_screen.elf

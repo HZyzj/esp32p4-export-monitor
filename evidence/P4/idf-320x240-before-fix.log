@@ -1,0 +1,7 @@
+62 dimension mismatches captured in 8 seconds of serial monitoring.
+W (1462) app_vendor: Drop frame with unexpected area: x=0 y=0 w=320 h=240
+W (1463) app_vendor: Drop frame with unexpected area: x=0 y=0 w=320 h=240
+W (1465) app_vendor: Drop frame with unexpected area: x=0 y=0 w=320 h=240
+W (1475) app_vendor: Drop frame with unexpected area: x=0 y=0 w=320 h=240
+W (1477) app_vendor: Drop frame with unexpected area: x=0 y=0 w=320 h=240
+W (1539) app_vendor: Drop frame with unexpected area: x=0 y=0 w=320 h=240

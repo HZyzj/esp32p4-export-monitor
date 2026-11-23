@@ -1,0 +1,50 @@
+esptool.py v4.14.0
+File size: 538224 (bytes)
+
+ESP32P4 image header
+====================
+Image version: 1
+Entry point: 0x4ff403fe
+Segments: 9
+Flash size: 16MB
+Flash freq: 80m
+Flash mode: DIO
+
+ESP32P4 extended image header
+=============================
+WP pin: 0xee (disabled)
+Flash pins drive settings: clk_drv: 0x0, q_drv: 0x0, d_drv: 0x0, cs0_drv: 0x0, hd_drv: 0x0, wp_drv: 0x0
+Chip ID: 18 (ESP32-P4)
+Minimal chip revision: v3.0, (legacy min_rev = 0)
+Maximal chip revision: v3.99
+
+Segments information
+====================
+Segment   Length   Load addr   File offs  Memory types
+-------  -------  ----------  ----------  ------------
+      0  0x1dbd8  0x40060020  0x00000018  DROM, IROM
+      1  0x001e4  0x30100000  0x0001dbf8  
+      2  0x00048  0x301001f0  0x0001dde4  
+      3  0x021dc  0x4ff40000  0x0001de34  DRAM, BYTE_ACCESSIBLE, IRAM
+      4  0x50684  0x40000020  0x00020018  DROM, IROM
+      5  0x0fddc  0x4ff421dc  0x000706a4  DRAM, BYTE_ACCESSIBLE, IRAM
+      6  0x030b4  0x4ff52000  0x00080488  DRAM, BYTE_ACCESSIBLE, IRAM
+      7  0x000d8  0x50108000  0x00083544  RTC_IRAM, RTC_DRAM
+      8  0x0001c  0x50108180  0x00083624  RTC_IRAM, RTC_DRAM
+
+ESP32P4 image footer
+====================
+Checksum: 0x4e (valid)
+Validation hash: 5c090f2a2f42073e7ff2ae98fea2bfa2cfba20cb94d0d7c39556e0fdfa65215f (valid)
+
+Application information
+=======================
+Project name: usb_touch_screen
+App version: f721a40-dirty
+Compile time:  
+ELF file SHA256: df272d6399d78184a859cb81547466e9ba0d1cbbbe5338121b397f5639372642
+ESP-IDF: v5.4.4
+Minimal eFuse block revision: 0.0
+Maximal eFuse block revision: 1.99
+MMU page size: 64 KB
+Secure version: 0

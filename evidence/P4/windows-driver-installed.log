@@ -1,0 +1,13 @@
+Present USB display nodes: 1
+USB node: xfz1986_usb_graphic(demo) | Class: Display | Status: OK
+HardwareIds: USB\VID_303A&PID_2987&REV_0101, USB\VID_303A&PID_2987
+ProblemCode: 0
+DriverInfPath: oem2.inf
+DriverProvider: xfz1986_cn
+DriverVersion: 1.2.25.2
+Service: WUDFRd
+Active desktop screens: 2
+\\.\DISPLAY3 1920x1080 at 0,0 Primary=True
+\\.\DISPLAY7 320x240 at 1920,0 Primary=False
+Monitor PnP: 通用即插即用监视器 | OK
+Monitor PnP: 通用即插即用监视器 | OK

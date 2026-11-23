@@ -1,0 +1,7 @@
+bootloader/bootloader.bin: OK
+usb_touch_screen.bin: OK
+partition_table/partition-table.bin: OK
+flasher_args.json: OK
+flash_args: OK
+sdkconfig: OK
+usb_touch_screen.elf: OK

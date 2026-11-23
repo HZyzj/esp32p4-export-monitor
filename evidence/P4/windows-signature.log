@@ -1,0 +1,16 @@
+
+
+File          : xfz1986_usb_graphic_250224_rc_sign.exe
+Status        : Valid
+StatusMessage : 签名已通过验证。
+Signer        : CN="Airspace Intelligent Technology (Changzhou) Co., Ltd.", O="Airspace Intelligent Technology (Changzh
+                ou) Co., Ltd.", S=江苏省, C=CN
+
+File          : xfz1986_usb_graphic.cat
+Status        : UnknownError
+StatusMessage : 时间戳签名和/或证书无法验证或已损坏。
+Signer        : CN="Chengdu Qiqiao Software Co., Ltd", OU=Digital ID Class 3 - Microsoft Software Validation v2, O="Che
+                ngdu Qiqiao Software Co., Ltd", L=Chengdu, S=Sichuan, C=CN
+
+
+

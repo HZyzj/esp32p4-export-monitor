@@ -1,0 +1,40 @@
+Linux LA0151 6.18.40.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Fri Jul 31 22:12:15 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+/home/yzj/project/esp32p4-mon
+ext4   /home/yzj/project/esp32p4-mon
+git version 2.34.1
+Python 3.11.15
+/usr/bin/cmake
+/usr/bin/ninja
+/usr/bin/lsusb
+IDF repository: /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4
+ESP-IDF v5.4.4
+esp-bmgr-assist==0.8.4
+idf-component-manager==2.5.2
+esptool==4.14.0
+ 24c60e243580c7868f4334a1ba3123481fe1aa48 components/bootloader/subproject/components/micro-ecc/micro-ecc (24c60e2)
+ 4c40f02e7255d0a4c859f70dababf2400eafcbfe components/bt/controller/lib_esp32 (4c40f02)
+ 1b0f5aac0fcf91ea042c781e6da10a528ca0da03 components/bt/controller/lib_esp32c2/esp32c2-bt-lib (1b0f5aa)
+ ebd6043a8e3c3bbde45ee483895303b9c1229ab5 components/bt/controller/lib_esp32c3_family (ebd6043)
+ bfd839208edeaf76ba3fc974031c8860e7ce9042 components/bt/controller/lib_esp32c5/esp32c5-bt-lib (bfd8392)
+ ee5e15225ac07ca17bf86c02e0fbf8854d78e0b5 components/bt/controller/lib_esp32c6/esp32c6-bt-lib (ee5e152)
+ 45da8146fb767c9efd423c4ba8bd2b877070ff97 components/bt/controller/lib_esp32h2/esp32h2-bt-lib (45da814)
+ 099fdcd4be7fdaa376ae0e3b4aaa674559c4a278 components/bt/esp_ble_mesh/lib/lib (099fdcd)
+ 5c1a43ca3d205c3d5183e57dedce335fb6a81155 components/bt/host/nimble/nimble (5c1a43c)
+ eeecc49ce8af123cf8ad40efdb9673e37b56230f components/cmock/CMock (eeecc49)
+ 71b47be7c950f1bf5f7e5303779fa99a16224bb6 components/cmock/CMock/vendor/c_exception (71b47be)
+ cf949f45ca6d172a177b00da21310607b97bc7a7 components/cmock/CMock/vendor/unity (cf949f4)
+ f37eb3edc9814eea57725b9aaecdea2f0caa31ff components/esp_coex/lib (f37eb3e)
+ ac744ff2c5c39c63f8cdd503d4074905647fdbb6 components/esp_phy/lib (ac744ff)
+ 7bd1599468d0912b7773ba225a6ef05252633e88 components/esp_wifi/lib (7bd1599)
+ 2867f6883a12920b1969ff9624c0ab0e4185c2ce components/heap/tlsf (2867f68)
+ c859b25da02955fef659d658b8f324b5cde87be3 components/json/cJSON (c859b25)
+ fd432e4ee2cfb7f7f1c7eb7227e0173412e7b84e components/lwip/lwip (fd432e4)
+ ffb280bb63c78bfec1e1ab55040671768c85c923 components/mbedtls/mbedtls (ffb280b)
+ cac1552e62b0474c162547b7cce345d7cd1aecfe components/mqtt/esp-mqtt (cac1552)
+ eb8f0378a2c9fdd77c214813997ab3aa495f6909 components/openthread/lib (eb8f037)
+ a12ff0d0f54fd41954b45047fcdd08f302731c5f components/openthread/openthread (a12ff0d)
+ e185d7fd85499c8ce5ca2a54f5cf8fe7dbe3f8df components/openthread/openthread/third_party/mbedtls/repo (e185d7f)
+ 457996474728cb8e968ed21953b72f74d2f536b2 components/openthread/openthread/third_party/mbedtls/repo/framework (4579964)
+ abc67a11c6db271bedbb9f58be85d6f4e2ea8389 components/protobuf-c/protobuf-c (abc67a1)
+ ad902cadceb39d0825a97e25ecb5867641f606ba components/spiffs/spiffs (ad902ca)
+ bf560290f6020737eafaa8b5cbd2177c3956c03f components/unity/unity (bf56029)

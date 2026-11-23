@@ -1,0 +1,8 @@
+2026-11-23
+User installed IDD 1.2.25.2. Windows PnP identifies oem2.inf, driver Status OK / ProblemCode 0.
+Before firmware correction: Windows extended screen 320x240; ESP rejected frames of that size. The driver udisp override was absent.
+After application-only update: Windows shows separate 1920x1080 and 1024x600 active screens.
+The test window opened on the primary display and moved to the ESP32-P4 display; the timed text refreshed for the 30.1-second smoke test.
+Physical LCD observation: user confirmed the test window was visible and the numeric timer was changing.
+Latest sample in the captured serial interval: 1957 cumulative submissions, 0 JPEG errors, 0 LCD draw errors.
+No screenshot was taken. Physical USB cycles and two-hour stability were deferred by the user.

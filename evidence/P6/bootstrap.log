@@ -1,0 +1,92 @@
+Requirement already satisfied: annotated-types==0.8.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 1)) (0.8.0)
+Requirement already satisfied: argcomplete==3.7.2 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 2)) (3.7.2)
+Requirement already satisfied: bitarray==3.12.3 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 3)) (3.12.3)
+Requirement already satisfied: bitstring==4.4.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 4)) (4.4.0)
+Requirement already satisfied: certifi==2026.10.23 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 5)) (2026.10.23)
+Requirement already satisfied: cffi==2.1.1 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 6)) (2.1.1)
+Requirement already satisfied: charset-normalizer==3.5.2 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 7)) (3.5.2)
+Requirement already satisfied: click==8.1.8 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 8)) (8.1.8)
+Requirement already satisfied: colorama==0.4.6 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 9)) (0.4.6)
+Requirement already satisfied: construct==2.10.70 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 10)) (2.10.70)
+Requirement already satisfied: cryptography==44.0.3 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 11)) (44.0.3)
+Requirement already satisfied: ecdsa==0.19.2 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 12)) (0.19.2)
+Requirement already satisfied: esp-bmgr-assist==0.8.4 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 13)) (0.8.4)
+Requirement already satisfied: esp-coredump==1.18.1 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 14)) (1.18.1)
+Requirement already satisfied: esp-idf-kconfig==2.5.4 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 15)) (2.5.4)
+Requirement already satisfied: esp-idf-monitor==1.11.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 16)) (1.11.0)
+Requirement already satisfied: esp-idf-size==1.8.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 17)) (1.8.0)
+Requirement already satisfied: esp-pylib==1.2.1 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 18)) (1.2.1)
+Requirement already satisfied: esp_idf_nvs_partition_gen==0.1.9 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 19)) (0.1.9)
+Requirement already satisfied: esp_idf_panic_decoder==1.5.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 20)) (1.5.0)
+Requirement already satisfied: esptool==4.14.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 21)) (4.14.0)
+Requirement already satisfied: filelock==4.2.9 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 22)) (4.2.9)
+Requirement already satisfied: freertos-gdb==1.0.4 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 23)) (1.0.4)
+Requirement already satisfied: idf-component-manager==2.5.2 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 24)) (2.5.2)
+Requirement already satisfied: idna==3.20 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 25)) (3.20)
+Requirement already satisfied: intelhex==2.3.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 26)) (2.3.0)
+Requirement already satisfied: jsonref==1.1.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 27)) (1.1.0)
+Requirement already satisfied: markdown-it-py==4.2.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 28)) (4.2.0)
+Requirement already satisfied: mdurl==0.1.2 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 29)) (0.1.2)
+Requirement already satisfied: packaging==26.3 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 30)) (26.3)
+Requirement already satisfied: pathvalidate==3.3.1 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 31)) (3.3.1)
+Requirement already satisfied: psutil==7.2.2 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 32)) (7.2.2)
+Requirement already satisfied: pyclang==0.7.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 33)) (0.7.0)
+Requirement already satisfied: pycparser==3.12 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 34)) (3.12)
+Requirement already satisfied: pydantic==2.14.3 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 35)) (2.14.3)
+Requirement already satisfied: pydantic-settings==2.16.2 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 36)) (2.16.2)
+Requirement already satisfied: pydantic_core==2.50.4 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 37)) (2.50.4)
+Requirement already satisfied: pyelftools==0.33 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 38)) (0.33)
+Requirement already satisfied: pygdbmi==0.11.0.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 39)) (0.11.0.0)
+Requirement already satisfied: Pygments==2.21.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 40)) (2.21.0)
+Requirement already satisfied: pyparsing==3.2.5 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 41)) (3.2.5)
+Requirement already satisfied: pyserial==3.5 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 42)) (3.5)
+Requirement already satisfied: python-dotenv==1.2.4 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 43)) (1.2.4)
+Requirement already satisfied: PyYAML==6.0.3 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 44)) (6.0.3)
+Requirement already satisfied: reedsolo==1.7.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 45)) (1.7.0)
+Requirement already satisfied: requests==2.34.2 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 46)) (2.34.2)
+Requirement already satisfied: requests-file==3.0.1 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 47)) (3.0.1)
+Requirement already satisfied: requests-toolbelt==1.0.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 48)) (1.0.0)
+Requirement already satisfied: rich==15.0.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 49)) (15.0.0)
+Requirement already satisfied: rich-click==1.9.9 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 50)) (1.9.9)
+Requirement already satisfied: ruamel.yaml==0.19.1 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 51)) (0.19.1)
+Requirement already satisfied: six==1.17.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 52)) (1.17.0)
+Requirement already satisfied: tibs==0.5.7 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 53)) (0.5.7)
+Requirement already satisfied: tqdm==4.70.1 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 54)) (4.70.1)
+Requirement already satisfied: tree-sitter==0.26.1 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 55)) (0.26.1)
+Requirement already satisfied: tree-sitter-c==0.24.2 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 56)) (0.24.2)
+Requirement already satisfied: truststore==0.10.5 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 57)) (0.10.5)
+Requirement already satisfied: typing-inspection==0.4.5 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 58)) (0.4.5)
+Requirement already satisfied: typing_extensions==4.16.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 59)) (4.16.0)
+Requirement already satisfied: urllib3==1.26.20 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 60)) (1.26.20)
+Requirement already satisfied: websockets==17.4 in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/firmware/python-requirements.lock (line 61)) (17.4)
+
+[notice] A new release of pip is available: 24.0 -> 26.3
+[notice] To update, run: python -m pip install --upgrade pip
+Selected targets are: esp32p4
+Current system platform: linux-amd64
+Installing tools: riscv32-esp-elf-gdb, riscv32-esp-elf, openocd-esp32, esp-rom-elfs
+Skipping riscv32-esp-elf-gdb@16.3_20250913 (already installed)
+Skipping riscv32-esp-elf@esp-14.2.0_20260121 (already installed)
+Skipping openocd-esp32@v0.12.0-esp32-20260304 (already installed)
+Skipping esp-rom-elfs@20241011 (already installed)
+Checking "python3" ...
+Python 3.11.15
+"python3" has been detected
+Activating ESP-IDF 5.4
+Setting IDF_PATH to '/home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4'.
+* Checking python version ... 3.11.15
+* Checking python dependencies ... OK
+* Deactivating the current ESP-IDF environment (if any) ... OK
+* Establishing a new ESP-IDF environment ... OK
+* Identifying shell ... bash
+* Detecting outdated tools in system ... Found tools that are not used by active ESP-IDF version.
+For removing old versions of xtensa-esp-elf, openocd-esp32, xtensa-esp-elf-gdb, riscv32-esp-elf-gdb use command 'python /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/idf_tools.py uninstall'
+To free up even more space, remove installation packages of those tools.
+Use option python /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/idf_tools.py uninstall --remove-archives.
+* Shell completion ... Autocompletion code generated
+
+Done! You can now compile ESP-IDF projects.
+Go to the project directory and run:
+
+  idf.py build
+ESP-IDF v5.4.4

@@ -1,0 +1,1 @@
+Command: PowerShell Get-PnpDevice -PresentOnly, filter USB\VID_303A*. Exit: 0. Matching devices: 0.

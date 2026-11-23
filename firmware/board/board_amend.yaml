@@ -1,0 +1,5 @@
+version: "1.0"
+description: "ESP32-P4X-Function-EV-Board V1.6 kit LCD"
+apply:
+  - lcd_v16.yaml
+  - sdkconfig.defaults.board

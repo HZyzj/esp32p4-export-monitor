@@ -1,0 +1,7 @@
+USB display driver: xfz1986_usb_graphic(demo), status OK
+Active screens: 2
+\\.\DISPLAY3 1920x1080 at 0,0 Primary=True
+\\.\DISPLAY9 1024x600 at 1920,0 Primary=False
+Test window moved to \\.\DISPLAY9 at 1938,18
+Test window completed after 30.1 seconds.
+PowerShell smoke test exit: 0.

@@ -1,0 +1,62 @@
+Executing action: bmgr
+ℹ️  Using user-specified project directory: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen
+📋 Version Information:
+   • Component Version: 0.7.6
+   • Git Commit: f721a40c (2026-11-19)
+   • Generation Time: 2026-11-23 11:40:15
+
+ℹ️  Using script directory as root directory: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen/managed_components/espressif__esp_board_manager
+ℹ️  Using project directory: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen
+ESP Board Manager - Board Listing
+========================================
+   Scanning managed components boards: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen/managed_components
+✅ Found 43 board(s):
+
+ℹ️  Board Components:
+  espressif/esp_boards:
+    [1] esp32_c3_aws_expresslink_devkit
+    [2] esp32_c3_devkit_rust_1
+    [3] esp32_c3_devkit_rust_2
+    [4] esp32_c3_devkitc_02
+    [5] esp32_c3_devkitm_1
+    [6] esp32_c3_lcdkit
+    [7] esp32_c3_lyra
+    [8] esp32_c5_devkitc_1
+    [9] esp32_c6_devkitc_1
+    [10] esp32_c6_devkitm_1
+    [11] esp32_devkitc
+    [12] esp32_devkitm_1
+    [13] esp32_ethernet_kit
+    [14] esp32_h2_devkitm_1
+    [15] esp32_lcdkit
+    [16] esp32_lyrat_4_3
+    [17] esp32_lyrat_mini_1_1
+    [18] esp32_meshkit_sense
+    [19] esp32_p4_eye
+    [20] esp32_p4_function_ev_board
+    [21] esp32_p4x_c5_function_ev
+    [22] esp32_pico_devkitm_2
+    [23] esp32_pico_kit
+    [24] esp32_pico_kit_1
+    [25] esp32_s31_function_coreboard_1
+    [26] esp32_s31_korvo_1
+    [27] esp32_s3_box_3
+    [28] esp32_s3_box_lite
+    [29] esp32_s3_devkitc_1
+    [30] esp32_s3_devkitm_1
+    [31] esp32_s3_eye
+    [32] esp32_s3_korvo_1
+    [33] esp32_s3_korvo_2_3
+    [34] esp32_s3_lcd_ev_board
+    [35] esp32_s3_usb_otg
+    [36] esp32_sense_kit
+    [37] esp32_vaquita_dspg
+    [38] esp_dualkey
+    [39] esp_mosaico
+    [40] esp_sensairshuttle
+    [41] esp_thread_border_router
+    [42] esp_vocat_1_0
+    [43] esp_vocat_1_2
+
+✅ Board listing completed!
+Done

@@ -1,0 +1,157 @@
+Checking "python3" ...
+Python 3.11.15
+"python3" has been detected
+Activating ESP-IDF 5.4
+Setting IDF_PATH to '/home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4'.
+* Checking python version ... 3.11.15
+* Checking python dependencies ... OK
+* Deactivating the current ESP-IDF environment (if any) ... OK
+* Establishing a new ESP-IDF environment ... OK
+* Identifying shell ... bash
+* Detecting outdated tools in system ... Found tools that are not used by active ESP-IDF version.
+For removing old versions of xtensa-esp-elf, openocd-esp32, xtensa-esp-elf-gdb, riscv32-esp-elf-gdb use command 'python /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/idf_tools.py uninstall'
+To free up even more space, remove installation packages of those tools.
+Use option python /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/idf_tools.py uninstall --remove-archives.
+* Shell completion ... Autocompletion code generated
+
+Done! You can now compile ESP-IDF projects.
+Go to the project directory and run:
+
+  idf.py build
+ESP-IDF v5.4.4
+14.2.0
+Executing action: fullclean
+Executing action: remove_managed_components
+Done
+Generating esp32_p4_function_ev_board with /home/yzj/project/esp32p4-mon/firmware/board
+[ESP_BMGR_ASSIST] Waiting for board manager bootstrap lock.
+project: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen
+lock: /tmp/esp_bmgr_py_locks/6a562eaacf0c598e.lock
+timeout: 60s
+If this waits unexpectedly, check the process holding the lock:
+  lsof /tmp/esp_bmgr_py_locks/6a562eaacf0c598e.lock
+  fuser -v /tmp/esp_bmgr_py_locks/6a562eaacf0c598e.lock
+[ESP_BMGR_ASSIST] Failed to download the declared esp_board_manager dependency.
+
+  Declared in: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen/main/idf_component.yml
+  Declared as: espressif/esp_board_manager: {'version': '==0.7.6', 'require': 'public'}
+
+[ESP_BMGR_ASSIST] Underlying cause:
+  NetworkConnectionError: HTTPSConnectionPool(host='components-file.espressif.com', port=443): Max retries exceeded with url: /components/espressif/esp_board_manager.json (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1016)')))
+
+[ESP_BMGR_ASSIST] Underlying cause traceback:
+Traceback (most recent call last):
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 713, in urlopen
+    self._prepare_proxy(conn)
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 1015, in _prepare_proxy
+    conn.connect()
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/urllib3/connection.py", line 419, in connect
+    self.sock = ssl_wrap_socket(
+                ^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/urllib3/util/ssl_.py", line 458, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(
+               ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/urllib3/util/ssl_.py", line 502, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ssl.py", line 517, in wrap_socket
+    return self.sslsocket_class._create(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ssl.py", line 1104, in _create
+    self.do_handshake()
+  File "/usr/lib/python3.11/ssl.py", line 1382, in do_handshake
+    self._sslobj.do_handshake()
+ssl.SSLEOFError: [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1016)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/requests/adapters.py", line 696, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 830, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 830, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 830, in urlopen
+    return self.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 802, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/urllib3/util/retry.py", line 594, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='components-file.espressif.com', port=443): Max retries exceeded with url: /components/espressif/esp_board_manager.json (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1016)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_tools/registry/request_processor.py", line 94, in make_request
+    response = session.request(
+               ^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/requests/sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/requests/sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/requests/adapters.py", line 727, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='components-file.espressif.com', port=443): Max retries exceeded with url: /components/espressif/esp_board_manager.json (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1016)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/esp_bmgr_py/idf_injector.py", line 422, in _direct_download_bmgr
+    _download_bmgr_component(project_path, dependency)
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/esp_bmgr_py/idf_injector.py", line 1199, in _download_bmgr_component
+    download_project_dependencies(
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_manager/dependencies.py", line 464, in download_project_dependencies
+    solution = solver.solve()
+               ^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_manager/version_solver/version_solver.py", line 265, in solve
+    return self._solve()
+           ^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_manager/version_solver/version_solver.py", line 136, in _solve
+    self.solve_manifest(manifest, cur_solution=cur_solution)
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_manager/version_solver/version_solver.py", line 281, in solve_manifest
+    self.solve_component(dep, manifest_path=manifest.path, cur_solution=cur_solution)
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_manager/version_solver/version_solver.py", line 321, in solve_component
+    cmp_with_versions = requirement.source.versions(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_tools/sources/web_service.py", line 197, in versions
+    cmp_with_versions = client.versions(component_name=self.normalized_name(name), spec=spec)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_tools/registry/multi_storage_client.py", line 104, in versions
+    _cmp_with_versions = storage_client.versions(
+                         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_tools/registry/base_client.py", line 75, in versions
+    component_response = self.get_component_response(  # type: ignore
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_tools/registry/storage_client.py", line 44, in wrapper
+    return f(self, request=request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_tools/registry/storage_client.py", line 92, in get_component_response
+    return super().get_component_response(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_tools/registry/base_client.py", line 120, in get_component_response
+    component_response = ComponentResponse(**request('get', ['components', component_name]))
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_tools/registry/storage_client.py", line 32, in request
+    return base_request(
+           ^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_tools/registry/request_processor.py", line 218, in base_request
+    response = make_request(
+               ^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_tools/registry/request_processor.py", line 76, in wrapper
+    return cache_to_dict(_request_cache, func, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_tools/registry/request_processor.py", line 58, in cache_to_dict
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yzj/project/esp32p4-mon/upstream/.idf-venv/lib/python3.11/site-packages/idf_component_tools/registry/request_processor.py", line 105, in make_request
+    raise NetworkConnectionError(str(e), endpoint=endpoint)
+idf_component_tools.registry.client_errors.NetworkConnectionError: HTTPSConnectionPool(host='components-file.espressif.com', port=443): Max retries exceeded with url: /components/espressif/esp_board_manager.json (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1016)')))
+Build log: /home/yzj/project/esp32p4-mon/evidence/P2/run-display-only.TqvTUC/build.log (exit 1)

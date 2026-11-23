@@ -1,0 +1,41 @@
+esptool.py --chip esp32p4 --port /dev/ttyACM0 -b 460800 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_freq 80m --flash_size 16MB 0x10000 usb_touch_screen.bin
+esptool.py v4.14.0
+Serial port /dev/ttyACM0
+Connecting...
+Chip is ESP32-P4 (revision v3.2)
+Features: High-Performance MCU
+Crystal is 40MHz
+USB mode: USB-Serial/JTAG
+MAC: <MAC>
+Using the new stub flasher.
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00010000 to 0x0008bfff...
+Compressed 507824 bytes to 266406...
+Writing at 0x00010000... (5 %)
+Writing at 0x0001eca2... (11 %)
+Writing at 0x0002b0e9... (17 %)
+Writing at 0x00031249... (23 %)
+Writing at 0x0003773b... (29 %)
+Writing at 0x0003e8df... (35 %)
+Writing at 0x00044f2b... (41 %)
+Writing at 0x0004b73c... (47 %)
+Writing at 0x00052192... (52 %)
+Writing at 0x00059a06... (58 %)
+Writing at 0x0006034f... (64 %)
+Writing at 0x00067f8d... (70 %)
+Writing at 0x0006e356... (76 %)
+Writing at 0x00075e77... (82 %)
+Writing at 0x0007c776... (88 %)
+Writing at 0x00082a42... (94 %)
+Writing at 0x00088f34... (100 %)
+Wrote 507824 bytes (266406 compressed) at 0x00010000 in 2.8 seconds (effective 1458.8 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+Command exit: 0.

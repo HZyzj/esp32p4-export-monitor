@@ -1,0 +1,14 @@
+Generated Board Manager configuration
+upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/gen_board_device_config.c:192:    .frame_format = DEV_DISPLAY_LCD_FRAME_FORMAT_RGB565_LE,
+upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/gen_board_device_config.c:197:            .reset_gpio_num = 27,
+upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/gen_board_device_config.c:198:            .reset_active_high = 0,
+upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/gen_board_device_config.c:207:                .dpi_clock_freq_mhz = 48,
+upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/gen_board_device_config.c:210:                .num_fbs = 1,
+upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/gen_board_device_config.c:213:                    .use_dma2d = true,
+upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/gen_board_device_config.c:217:                    .h_size = 1024,
+upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/gen_board_device_config.c:218:                    .v_size = 600,
+upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/gen_board_periph_config.c:138:    .chan_id = 3,
+upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/gen_board_periph_config.c:139:    .voltage_mv = 2500,
+upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/gen_board_periph_config.c:150:    .lane_bit_rate_mbps = 1000,
+upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/gen_board_periph_config.c:158:    .gpio_num = 26,
+Board Manager outputs are generated before ESP-IDF configure.

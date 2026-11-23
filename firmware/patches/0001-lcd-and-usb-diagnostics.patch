@@ -1,0 +1,304 @@
+diff --git a/examples/usb/device/usb_extend_screen/main/app_lcd.c b/examples/usb/device/usb_extend_screen/main/app_lcd.c
+index a91ee76..c906591 100644
+--- a/examples/usb/device/usb_extend_screen/main/app_lcd.c
++++ b/examples/usb/device/usb_extend_screen/main/app_lcd.c
+@@ -4,6 +4,7 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
++#include <inttypes.h>
+ #include <stdbool.h>
+ #include <stdio.h>
+ #include <string.h>
+@@ -17,6 +18,10 @@
+ #include "esp_log.h"
+ #include "esp_timer.h"
+ 
++#if CONFIG_IDF_TARGET_ESP32P4
++#include "esp_lcd_mipi_dsi.h"
++#endif
++
+ #if CONFIG_SOC_JPEG_DECODE_SUPPORTED
+ #include "driver/jpeg_decode.h"
+ #else
+@@ -259,24 +264,19 @@ exit:
+ }
+ #endif
+ 
+-void app_lcd_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
++typedef enum {
++    LCD_FRAME_JPEG_ERROR,
++    LCD_FRAME_DRAW_ERROR,
++    LCD_FRAME_SUBMITTED,
++    LCD_FRAME_RESULT_COUNT,
++} lcd_frame_result_t;
++
++static lcd_frame_result_t app_lcd_decode_and_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
+ {
+     if (width != s_lcd_width || height != s_lcd_height) {
+         ESP_LOGW(TAG, "Drop JPEG with unexpected size: %ux%u, expected %ux%u",
+                  width, height, s_lcd_width, s_lcd_height);
+-        return;
+-    }
+-
+-    static int fps_count;
+-    static int64_t start_time;
+-    if (start_time == 0) {
+-        start_time = esp_timer_get_time();
+-    }
+-    if (++fps_count == 50) {
+-        int64_t end_time = esp_timer_get_time();
+-        ESP_LOGI(TAG, "fps: %f", 1000000.0 / ((end_time - start_time) / 50.0));
+-        start_time = end_time;
+-        fps_count = 0;
++        return LCD_FRAME_JPEG_ERROR;
+     }
+ 
+ #if CONFIG_SOC_JPEG_DECODE_SUPPORTED
+@@ -286,14 +286,14 @@ void app_lcd_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
+                                                           &output_width, &output_height);
+     if (layout_ret != ESP_OK) {
+         ESP_LOGD(TAG, "Unsupported JPEG layout: %s", esp_err_to_name(layout_ret));
+-        return;
++        return LCD_FRAME_JPEG_ERROR;
+     }
+ 
+     size_t expected_output_size = output_width * output_height * s_lcd_bytes_per_pixel;
+     if (expected_output_size > s_decode_buffer_sizes[s_buffer_index]) {
+         ESP_LOGW(TAG, "JPEG output too large: %u > %u", (unsigned)expected_output_size,
+                  (unsigned)s_decode_buffer_sizes[s_buffer_index]);
+-        return;
++        return LCD_FRAME_JPEG_ERROR;
+     }
+ 
+     uint32_t output_size = 0;
+@@ -302,12 +302,12 @@ void app_lcd_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
+                                                 s_decode_buffer_sizes[s_buffer_index], &output_size);
+     if (decode_ret != ESP_OK) {
+         ESP_LOGD(TAG, "JPEG decode failed: %s", esp_err_to_name(decode_ret));
+-        return;
++        return LCD_FRAME_JPEG_ERROR;
+     }
+     if (output_size != expected_output_size) {
+         ESP_LOGW(TAG, "Unexpected JPEG output size: %u, expected %u",
+                  (unsigned)output_size, (unsigned)expected_output_size);
+-        return;
++        return LCD_FRAME_JPEG_ERROR;
+     }
+ 
+     /*
+@@ -328,7 +328,7 @@ void app_lcd_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
+                                                 s_decode_buffer_sizes[s_buffer_index], width, height);
+     if (jpeg_ret != JPEG_ERR_OK) {
+         ESP_LOGD(TAG, "JPEG decode failed: %d", jpeg_ret);
+-        return;
++        return LCD_FRAME_JPEG_ERROR;
+     }
+     if (s_lcd_frame_format == DEV_DISPLAY_LCD_FRAME_FORMAT_BGR888) {
+         uint8_t *output = s_decode_buffers[s_buffer_index];
+@@ -345,12 +345,70 @@ void app_lcd_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
+                                               s_decode_buffers[s_buffer_index]);
+     if (ret != ESP_OK) {
+         ESP_LOGD(TAG, "LCD draw failed: %s", esp_err_to_name(ret));
+-        return;
++        return LCD_FRAME_DRAW_ERROR;
+     }
+ 
+     s_buffer_index = (s_buffer_index + 1) % LCD_DECODE_BUFFER_COUNT;
++    return LCD_FRAME_SUBMITTED;
+ }
+ 
++void app_lcd_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
++{
++    lcd_frame_result_t result = app_lcd_decode_and_draw(buf, len, width, height);
++#if CONFIG_EXAMPLE_ENABLE_PRINT_FPS_RATE_VALUE
++    static uint32_t total[LCD_FRAME_RESULT_COUNT];
++    static uint32_t submitted_in_interval;
++    static int64_t interval_start_us;
++    int64_t now = esp_timer_get_time();
++    if (interval_start_us == 0) {
++        interval_start_us = now;
++    }
++    total[result]++;
++    submitted_in_interval += result == LCD_FRAME_SUBMITTED;
++    int64_t elapsed_us = now - interval_start_us;
++    if (elapsed_us >= 5000000) {
++        ESP_LOGI(TAG, "LCD submissions: %.1f fps, total=%" PRIu32
++                 ", jpeg_errors=%" PRIu32 ", draw_errors=%" PRIu32,
++                 submitted_in_interval * 1000000.0 / elapsed_us, total[LCD_FRAME_SUBMITTED],
++                 total[LCD_FRAME_JPEG_ERROR], total[LCD_FRAME_DRAW_ERROR]);
++        interval_start_us = now;
++        submitted_in_interval = 0;
++    }
++#else
++    (void)result;
++#endif
++}
++
++#if CONFIG_IDF_TARGET_ESP32P4
++static esp_err_t app_lcd_show_boot_pattern(void)
++{
++    if (s_lcd_width != 1024 || s_lcd_height != 600 ||
++            s_lcd_frame_format != DEV_DISPLAY_LCD_FRAME_FORMAT_RGB565_LE) {
++        return ESP_OK;
++    }
++    static const uint16_t colors[] = {
++        0xf800, 0x07e0, 0x001f, 0xffff, 0x0000, 0xffe0, 0x07ff, 0xf81f,
++    };
++    const size_t color_count = sizeof(colors) / sizeof(colors[0]);
++    void *framebuffer = NULL;
++    ESP_RETURN_ON_ERROR(esp_lcd_dpi_panel_get_frame_buffer(s_panel, 1, &framebuffer),
++                        TAG, "get DPI framebuffer for startup bars");
++    uint16_t *pixels = framebuffer;
++    for (size_t x = 0; x < s_lcd_width; x++) {
++        pixels[x] = colors[x * color_count / s_lcd_width];
++    }
++    const size_t row_bytes = s_lcd_width * sizeof(*pixels);
++    for (size_t y = 1; y < s_lcd_height; y++) {
++        memcpy(pixels + y * s_lcd_width, pixels, row_bytes);
++    }
++    // The DPI driver writes back the hardware framebuffer when submitted directly.
++    ESP_RETURN_ON_ERROR(esp_lcd_panel_draw_bitmap(s_panel, 0, 0, s_lcd_width, s_lcd_height, framebuffer),
++                        TAG, "submit startup bars");
++    ESP_LOGI(TAG, "LCD boot pattern submitted");
++    return ESP_OK;
++}
++#endif
++
+ esp_err_t app_lcd_get_resolution(uint16_t *width, uint16_t *height)
+ {
+     ESP_RETURN_ON_FALSE(width && height, ESP_ERR_INVALID_ARG, TAG, "resolution output is NULL");
+@@ -411,6 +469,11 @@ esp_err_t app_lcd_init(void)
+ #endif
+ 
+     ESP_RETURN_ON_ERROR(app_lcd_allocate_decode_buffers(), TAG, "allocate decode buffers failed");
++#if CONFIG_IDF_TARGET_ESP32P4
++    if (strcmp(display_config->sub_type, "dsi") == 0) {
++        ESP_RETURN_ON_ERROR(app_lcd_show_boot_pattern(), TAG, "draw LCD boot pattern failed");
++    }
++#endif
+     ESP_RETURN_ON_ERROR(app_lcd_backlight_set(100), TAG, "turn LCD backlight on failed");
+     return ESP_OK;
+ #endif
+diff --git a/examples/usb/device/usb_extend_screen/main/app_usb.c b/examples/usb/device/usb_extend_screen/main/app_usb.c
+index b4c8bae..43ef15c 100644
+--- a/examples/usb/device/usb_extend_screen/main/app_usb.c
++++ b/examples/usb/device/usb_extend_screen/main/app_usb.c
+@@ -96,7 +96,7 @@ esp_err_t app_usb_init(void)
+ // Invoked when device is mounted
+ void tud_mount_cb(void)
+ {
+-    ESP_LOGI(TAG, "USB Mount");
++    ESP_LOGI(TAG, "USB Mount: %s", tud_speed_get() == TUSB_SPEED_HIGH ? "high-speed" : "full-speed");
+ }
+ 
+ // Invoked when device is unmounted
+diff --git a/examples/usb/device/usb_extend_screen/main/app_vendor.c b/examples/usb/device/usb_extend_screen/main/app_vendor.c
+index 7ef69c6..9f2700c 100644
+--- a/examples/usb/device/usb_extend_screen/main/app_vendor.c
++++ b/examples/usb/device/usb_extend_screen/main/app_vendor.c
+@@ -153,15 +153,21 @@ void tud_vendor_rx_cb(uint8_t itf, uint8_t const* buffer, uint16_t bufsize)
+                         break;
+                     }
+ 
+-                    static int fps_count = 0;
+-                    static int64_t start_time = 0;
+-                    fps_count++;
+-                    if (fps_count == 50) {
+-                        int64_t end_time = esp_timer_get_time();
+-                        ESP_LOGI(TAG, "Input fps: %f", 1000000.0 / ((end_time - start_time) / 50.0));
+-                        start_time = end_time;
+-                        fps_count = 0;
++#if CONFIG_EXAMPLE_ENABLE_PRINT_FPS_RATE_VALUE
++                    static uint32_t input_frames;
++                    static int64_t input_start_us;
++                    int64_t now = esp_timer_get_time();
++                    if (input_start_us == 0) {
++                        input_start_us = now;
+                     }
++                    input_frames++;
++                    if (now - input_start_us >= 5000000) {
++                        ESP_LOGI(TAG, "Input JPEG headers: %.1f fps",
++                                 input_frames * 1000000.0 / (now - input_start_us));
++                        input_start_us = now;
++                        input_frames = 0;
++                    }
++#endif
+ 
+                     current_frame = frame_get_empty();
+                     if (current_frame) {
+diff --git a/examples/usb/device/usb_extend_screen/main/idf_component.yml b/examples/usb/device/usb_extend_screen/main/idf_component.yml
+index ec9042f..200ca3b 100644
+--- a/examples/usb/device/usb_extend_screen/main/idf_component.yml
++++ b/examples/usb/device/usb_extend_screen/main/idf_component.yml
+@@ -6,9 +6,10 @@ targets:
+ dependencies:
+   idf: ">=5.4.4,!=5.5.0,!=5.5.1,!=5.5.2"
+   espressif/esp_board_manager:
+-    version: "^0.7.1"
++    version: "==0.7.6"
+     require: public
+-  espressif/tinyusb: "*"
++  espressif/esp_boards: "==0.7.3"
++  espressif/tinyusb: "==0.19.0~3"
+   espressif/esp_new_jpeg:
+     version: "^1.0.1"
+     rules:
+diff --git a/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.c b/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.c
+index 4069531..695ae98 100644
+--- a/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.c
++++ b/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.c
+@@ -27,6 +27,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include "esp_check.h"
++#include "esp_log.h"
+ #include "tusb.h"
+ #include "tusb_config.h"
+ #include "uac_config.h"
+@@ -156,7 +157,7 @@ static char vendor_str[64];
+ char const *string_desc_arr [] = {
+     (const char[]) { 0x09, 0x04 },    // 0: is supported language is English (0x0409)
+     USB_MANUFACTURER,                 // 1: Manufacturer
+-    "ESP_Extern_Screen",              // 2: Product
++    vendor_str,                       // 2: Product, used by the released Windows IDD
+     "012-2021",                       // 3: Serials, should use chip ID
+     vendor_str,                       // 4: Vendor Interface
+ #if CFG_TUD_HID
+@@ -196,11 +197,12 @@ esp_err_t usb_descriptors_init(uint16_t width, uint16_t height)
+                         ESP_ERR_INVALID_STATE, "usb_desc", "unexpected HID report layout");
+ #endif
+ 
++    // The Windows IDD interprets Bl in KiB. Round down to stay within the USB receive buffer.
+     int written = snprintf(vendor_str, sizeof(vendor_str),
+                            CONFIG_IDF_TARGET "udisp0_R%ux%u_Ejpg%d_Fps%d_Bl%d",
+                            width, height, CONFIG_USB_EXTEND_SCREEN_JPEG_QUALITY,
+                            CONFIG_USB_EXTEND_SCREEN_MAX_FPS,
+-                           CONFIG_USB_EXTEND_SCREEN_FRAME_LIMIT_B);
++                           CONFIG_USB_EXTEND_SCREEN_FRAME_LIMIT_B / 1024);
+     ESP_RETURN_ON_FALSE(written > 0 && written < sizeof(vendor_str), ESP_ERR_INVALID_SIZE,
+                         "usb_desc", "vendor descriptor string is too long");
+     return ESP_OK;
+diff --git a/examples/usb/device/usb_extend_screen/main/usb_extend_screen.c b/examples/usb/device/usb_extend_screen/main/usb_extend_screen.c
+index a393bba..63fc249 100644
+--- a/examples/usb/device/usb_extend_screen/main/usb_extend_screen.c
++++ b/examples/usb/device/usb_extend_screen/main/usb_extend_screen.c
+@@ -8,6 +8,8 @@
+ #include "app_usb.h"
+ #include "usb_descriptors.h"
+ #include "esp_log.h"
++#include "esp_heap_caps.h"
++#include "esp_system.h"
+ #include "esp_board_manager.h"
+ #if CONFIG_HID_TOUCH_ENABLE
+ #include "app_touch.h"
+@@ -21,6 +23,9 @@ void app_main(void)
+     ESP_LOGI(TAG, "USB extend screen example");
+     ESP_ERROR_CHECK(esp_board_manager_print_board_info());
+     ESP_ERROR_CHECK(app_lcd_init());
++    ESP_LOGI(TAG, "Reset reason=%d, PSRAM heap total=%zu free=%zu",
++             esp_reset_reason(), heap_caps_get_total_size(MALLOC_CAP_SPIRAM),
++             heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
+     ESP_ERROR_CHECK(app_usb_init());
+ #if CONFIG_HID_TOUCH_ENABLE
+     ESP_ERROR_CHECK(app_touch_init());

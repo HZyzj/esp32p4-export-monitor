@@ -1,0 +1,3 @@
+usbipd: warning: Unknown USB filter 'hrdevmon' may be incompatible with this software; 'bind --force' may be required.
+
+Exit: 0

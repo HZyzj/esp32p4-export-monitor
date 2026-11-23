@@ -1,0 +1,1616 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..0993df5
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,4 @@
++/upstream/
++/out/
++/evidence/P3/private/
++/evidence/*/collected-*/
+diff --git a/AGENTS.md b/AGENTS.md
+new file mode 100644
+index 0000000..5ea4c4a
+--- /dev/null
++++ b/AGENTS.md
+@@ -0,0 +1,3 @@
++# P4 USB 扩展屏
++
++入口见 README.md。工程约束见 ESP32_P4_USB_Extended_Display_AGENT_TASK.md，当前状态见 TASKS.md。上游固定版本见 firmware/versions.env。提交或归档时保留 firmware、scripts、docs 与脱敏证据。原始日志和设备标识留在私有记录中。烧录前确认板卡及芯片的唯一身份。
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..2196f20
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,22 @@
++# ESP32-P4X V1.6 USB 扩展屏
++
++面向 ESP32-P4X-Function-EV-Board V1.6 和套件 7 英寸 1024×600 MIPI DSI LCD。固件基于乐鑫 `usb_extend_screen`，默认构建纯显示版 `303A:2987`。复合版 `303A:2986` 提供 HID 与 UAC 的后续测试入口。
++
++## 复现构建
++
++在 WSL2 的 Linux 文件系统进入本项目。使用 Git、curl、Python 3.11（含 venv）、CMake、Ninja 及现有 ESP-IDF 工具。首次从锁定版本准备依赖，已准备的工作区直接从第二条开始。脚本在 `upstream/` 内准备独立工具环境。已有干净的 v5.4.4 checkout 也可通过 `P4_IDF_PATH` 使用。
++
++```bash
++scripts/bootstrap.sh
++scripts/build.sh --clean
++scripts/inspect_build.sh display-only
++```
++
++复合版使用 `scripts/build.sh --clean --profile composite`。二进制、ELF、`flasher_args.json`、有效 `sdkconfig`、`SHA256SUMS` 位于 `out/<配置>/`。依赖版本见 [版本锁](firmware/versions.env) 和 [组件锁](firmware/dependencies.lock)。构建中的板级配置由 Board Manager 生成。
++
++## 接线与验收
++
++- 按 [V1.6 审核](docs/BOARD_V16_AUDIT.md) 接 DSI、GPIO27 复位、GPIO26 背光及 LCD 转接板供电。
++- 只透传 **Serial/JTAG** USB 到 WSL。先按 [烧录手册](docs/WSL_FLASHING.md) 识别芯片、修订版、Flash 和 MAC，再烧录并检查开机色条。
++- **HS USB Type-C** 保留在 Windows。根据 [驱动手册](docs/WINDOWS_DRIVER.md) 复核驱动并验证扩展模式。当前实机已用 IDD 1.2.25.2 通过 1024×600 短时扩展显示。
++- [当前进度](TASKS.md) · [测试表](docs/ACCEPTANCE.md) · [排障](docs/TROUBLESHOOTING.md) · [交接](docs/HANDOFF.md)
+diff --git a/TASKS.md b/TASKS.md
+new file mode 100644
+index 0000000..fe25239
+--- /dev/null
++++ b/TASKS.md
+@@ -0,0 +1,19 @@
++# 执行状态
++
++已达到 **DEVICE_READY**，**Windows 1024×600 扩展桌面实测通过**。按用户选择先交付当前结果，完整 MVP 的实体拔插和两小时稳定性验收待执行。
++
++| 阶段 | 状态 | 命令、退出码与证据 |
++|---|---|---|
++| P0 环境与基线 | PASS | `scripts/audit_env.sh` → 0，[环境](evidence/P0/env-audit.log)。`git rev-parse HEAD`、递归子模块检查和 `idf.py bmgr -l` → 0，[板卡列表](evidence/P0/board-list.log)。[版本矩阵](docs/BASELINE.md) |
++| P1 V1.6 板级配置 | PASS | `idf.py bmgr -b esp32_p4_function_ev_board -a firmware/board`（实际传绝对路径）→ 0，[生成日志](evidence/P1/board-generate.log) 与 [生成配置](evidence/P1/board-config.txt)。覆盖 LCD、GPIO、Rev 3.x 与内存配置 |
++| P1 真实 LCD 点亮 | PASS | 用户确认开机色条正常。两次启动记录均为 1024×600 RGB565_LE，见 [串口证据](evidence/P3/com6-flash-startup.log) |
++| P2 USB 固件构建与静态检查 | PASS | 兼容修正版纯显示与复合固件均干净构建 → 0；实际 ELF 验证 USB ID、端点及产品与接口共用的显示参数字符串。[纯显示构建](evidence/P4/idd-fix-display-only-build.log) · [复合构建](evidence/P4/idd-fix-composite-build.log) |
++| P3 识别、原 Flash 备份、烧录与复位启动 | PASS | COM6（303A:1001，BUSID 1-4）透传 → 0；`scripts/flash.sh identify` → 0，ESP32-P4 Rev 3.2、16 MB Flash；`read_flash` 和备份哈希校验 → 0；`scripts/flash.sh flash … display-only` → 0，三区段写入验证通过，首次启动及额外串口复位均读取到 32 MB PSRAM 和 LCD 初始化。[P3 记录](evidence/P3/hardware-run.txt) |
++| P3 USB HS 枚举 | PASS | Windows `Get-PnpDevice` → 0，识别到纯显示设备。Windows USB 集线器只读查询 → 0，报告 480 Mbps High-Speed。[枚举](evidence/P4/windows-2987-enumeration.log) · [速度](evidence/P4/windows-2987-speed.log) |
++| P3 整机断电冷启动 | BLOCKED_EXTERNAL | 串口复位已测试通过，物理断电重启待验证。 |
++| P4 驱动离线审核 | PASS | 下载、提取 INF/CAT、计算 SHA256 → 0，[INF](evidence/P4/inf-matches.txt)、[散列验证](evidence/P4/hash-check.log)。PowerShell `Get-AuthenticodeSignature` → 0，安装器 Valid，驱动目录 UnknownError，[本机验证](evidence/P4/windows-signature.log) |
++| P4 Windows 安装与扩展模式 | PASS | 用户安装 IDD 1.2.25.2，Windows 绑定 `oem2.inf`，设备正常。旧固件获得 320×240 模式，串口确认丢弃尺寸不匹配的帧。更新应用分区 → 0 后，Windows 为 1024×600 扩展副屏。窗口移入和 30 秒动态刷新由用户目视确认。[现场记录](evidence/P4/extended-desktop-test.txt) |
++| P5 短时显示、触摸、性能及稳定性 | TODO | 色条与短时 Windows 扩展显示通过。实体拔插 10 次、两小时连续运行和其他增强测试待执行。[验收表](docs/ACCEPTANCE.md) |
++| P6 自动化、回归和交付 | PASS | `scripts/bootstrap.sh` → 0，[依赖准备](evidence/P6/bootstrap.log)；纯显示兼容修正版重复干净构建，七项 SHA256 相同，[回归](evidence/P6/idd-fix-reproducibility.log)。`bash -n`、脱敏、缺串口拒绝与补丁检查，[脚本证据](evidence/P6/script-checks.log) |
++
++构建期间处理了旧 Python 环境链接、ESP-IDF 个别子模块请求超时和构建清理顺序。早期 `--clean` 调用在 BMGR 后移除了管理组件，导致 CMake 回落到 esp32。脚本已改为先清理再生成，之后两种配置都构建成功。最终 CMake 的已知信息包括首次分阶段解析条件组件的重跑、未使用的相机及 Hosted SDIO 默认项和示例/UAC 共享的 HS choice；编译器未报告源代码警告。见 [环境记录](evidence/P0/) 和 [排障](docs/TROUBLESHOOTING.md)。
+diff --git a/firmware/versions.env b/firmware/versions.env
+new file mode 100644
+index 0000000..ab6e478
+--- /dev/null
++++ b/firmware/versions.env
+@@ -0,0 +1,8 @@
++IOT_URL=https://github.com/espressif/esp-iot-solution.git
++IOT_REV=f721a40c032f6168844fe3bd321bc182e2593348
++IDF_URL=https://github.com/espressif/esp-idf.git
++IDF_TAG=v5.4.4
++IDF_REV=296b6eab9445fd720e71aecab961e2d3fbca9944
++BMGR_ASSIST_VERSION=0.8.4
++EXAMPLE_REL=examples/usb/device/usb_extend_screen
++BASE_BOARD=esp32_p4_function_ev_board
+diff --git a/firmware/python-requirements.lock b/firmware/python-requirements.lock
+new file mode 100644
+index 0000000..95a4bf3
+--- /dev/null
++++ b/firmware/python-requirements.lock
+@@ -0,0 +1,61 @@
++annotated-types==0.8.0
++argcomplete==3.7.2
++bitarray==3.12.3
++bitstring==4.4.0
++certifi==2026.10.23
++cffi==2.1.1
++charset-normalizer==3.5.2
++click==8.1.8
++colorama==0.4.6
++construct==2.10.70
++cryptography==44.0.3
++ecdsa==0.19.2
++esp-bmgr-assist==0.8.4
++esp-coredump==1.18.1
++esp-idf-kconfig==2.5.4
++esp-idf-monitor==1.11.0
++esp-idf-size==1.8.0
++esp-pylib==1.2.1
++esp_idf_nvs_partition_gen==0.1.9
++esp_idf_panic_decoder==1.5.0
++esptool==4.14.0
++filelock==4.2.9
++freertos-gdb==1.0.4
++idf-component-manager==2.5.2
++idna==3.20
++intelhex==2.3.0
++jsonref==1.1.0
++markdown-it-py==4.2.0
++mdurl==0.1.2
++packaging==26.3
++pathvalidate==3.3.1
++psutil==7.2.2
++pyclang==0.7.0
++pycparser==3.12
++pydantic==2.14.3
++pydantic-settings==2.16.2
++pydantic_core==2.50.4
++pyelftools==0.33
++pygdbmi==0.11.0.0
++Pygments==2.21.0
++pyparsing==3.2.5
++pyserial==3.5
++python-dotenv==1.2.4
++PyYAML==6.0.3
++reedsolo==1.7.0
++requests==2.34.2
++requests-file==3.0.1
++requests-toolbelt==1.0.0
++rich==15.0.0
++rich-click==1.9.9
++ruamel.yaml==0.19.1
++six==1.17.0
++tibs==0.5.7
++tqdm==4.70.1
++tree-sitter==0.26.1
++tree-sitter-c==0.24.2
++truststore==0.10.5
++typing-inspection==0.4.5
++typing_extensions==4.16.0
++urllib3==1.26.20
++websockets==17.4
+diff --git a/firmware/dependencies.lock b/firmware/dependencies.lock
+new file mode 100644
+index 0000000..0de9d34
+--- /dev/null
++++ b/firmware/dependencies.lock
+@@ -0,0 +1,216 @@
++dependencies:
++  espressif/cmake_utilities:
++    component_hash: 351350613ceafba240b761b4ea991e0f231ac7a9f59a9ee901f751bddc0bb18f
++    dependencies:
++    - name: idf
++      require: private
++      version: '>=4.1'
++    source:
++      registry_url: https://components.espressif.com
++      type: service
++    version: 0.5.3
++  espressif/esp_board_manager:
++    component_hash: af9d7a914a5682933224358f79f1120d55e11f054eda0d015890718d50652252
++    dependencies:
++    - matches:
++      - if: $CONFIG{ESP_BOARD_DEV_BUTTON_SUPPORT} == True
++      name: espressif/button
++      registry_url: https://components.espressif.com
++      require: private
++      version: ^4.1.4
++    - name: espressif/esp_boards
++      registry_url: https://components.espressif.com
++      require: private
++      version: ~0.7.3
++    - matches:
++      - if: $CONFIG{ESP_BOARD_DEV_AUDIO_CODEC_SUPPORT} == True
++      name: espressif/esp_codec_dev
++      registry_url: https://components.espressif.com
++      require: private
++      version: ^2.0.0-beta4
++    - matches:
++      - if: $CONFIG{ESP_BOARD_DEV_GPIO_EXPANDER_SUPPORT} == True
++      name: espressif/esp_io_expander
++      registry_url: https://components.espressif.com
++      require: private
++      version: ^1.2.1
++    - matches:
++      - if: $CONFIG{ESP_BOARD_DEV_DISPLAY_LCD_SUB_RGB_3WIRE_SPI_SUPPORT} == True
++      name: espressif/esp_lcd_panel_io_additions
++      registry_url: https://components.espressif.com
++      require: private
++      version: ^1.0.0
++    - matches:
++      - if: $CONFIG{ESP_BOARD_DEV_LCD_TOUCH_SUPPORT} == True
++      name: espressif/esp_lcd_touch
++      registry_url: https://components.espressif.com
++      require: private
++      version: '*'
++    - matches:
++      - if: $CONFIG{ESP_BOARD_DEV_CAMERA_SUPPORT} == True
++      name: espressif/esp_video
++      registry_url: https://components.espressif.com
++      require: private
++      version: ^2.3.0
++    - matches:
++      - if: $CONFIG{ESP_BOARD_DEV_KNOB_SUPPORT} == True
++      name: espressif/knob
++      registry_url: https://components.espressif.com
++      require: private
++      version: ^1.1.0
++    - matches:
++      - if: $CONFIG{ESP_BOARD_DEV_LED_STRIP_SUPPORT} == True
++      name: espressif/led_strip
++      registry_url: https://components.espressif.com
++      require: private
++      version: '*'
++    - matches:
++      - if: $CONFIG{ESP_BOARD_DEV_LITTLEFS_SUPPORT} == True
++      name: joltwallet/littlefs
++      registry_url: https://components.espressif.com
++      require: private
++      version: ^1.22.1
++    source:
++      registry_url: https://components.espressif.com/
++      type: service
++    version: 0.7.6
++  espressif/esp_boards:
++    component_hash: 1c8a80515405a0417e8d3437a00925b9f443da06b9fe8379f6b1c3abd50437f4
++    dependencies: []
++    source:
++      registry_url: https://components.espressif.com/
++      type: service
++    version: 0.7.3
++  espressif/esp_codec_dev:
++    component_hash: 59036ca9e5dccffef1c54ae28361536c87f0fbacad709d1c2192831b0111a2e5
++    dependencies:
++    - name: espressif/usb_host_uac
++      registry_url: https://components.espressif.com
++      require: private
++      rules:
++      - if: target in [esp32s2, esp32s3, esp32s31, esp32p4, esp32h4]
++      version: ^1.5.0
++    - name: idf
++      require: private
++      version: '>=5.4.4,!=5.5.0,!=5.5.1,!=5.5.2'
++    source:
++      registry_url: https://components.espressif.com
++      type: service
++    version: 2.0.0-beta5
++  espressif/esp_lcd_ek79007:
++    component_hash: 8005700b7f10c7136b6e2a3f19a48f972aa1d13ed107ed298574e8d24d17ea83
++    dependencies:
++    - name: espressif/cmake_utilities
++      registry_url: https://components.espressif.com
++      require: private
++      version: 0.*
++    - name: idf
++      require: private
++      version: '>=5.3'
++    source:
++      registry_url: https://components.espressif.com/
++      type: service
++    targets:
++    - esp32p4
++    version: 1.0.4
++  espressif/esp_lcd_touch:
++    component_hash: 3f85a7d95af876f1a6ecca8eb90a81614890d0f03a038390804e5a77e2caf862
++    dependencies:
++    - name: idf
++      require: private
++      version: '>=4.4.2'
++    source:
++      registry_url: https://components.espressif.com
++      type: service
++    version: 1.2.1
++  espressif/esp_lcd_touch_gt911:
++    component_hash: 737bdf29e0823eacf041381e81db2aaf5d378f3b5417df7f415f83319e3e790b
++    dependencies:
++    - name: espressif/esp_lcd_touch
++      registry_url: https://components.espressif.com
++      require: public
++      version: ^1.2.0
++    - name: idf
++      require: private
++      version: '>=5.2'
++    source:
++      registry_url: https://components.espressif.com/
++      type: service
++    version: 1.2.1
++  espressif/tinyusb:
++    component_hash: a40b7f67df6ac254a4afd96c6401cc56f2059ae747d6d7e66b568bca53ad0edc
++    dependencies:
++    - name: idf
++      require: private
++      version: '>=5.0'
++    source:
++      registry_url: https://components.espressif.com/
++      type: service
++    targets:
++    - esp32s2
++    - esp32s3
++    - esp32p4
++    - esp32h4
++    - esp32s31
++    version: 0.19.0~3
++  espressif/usb_device_uac:
++    dependencies:
++    - name: idf
++      version: '>=5.0'
++    - name: espressif/tinyusb
++      version: ^0.19.0~3
++    - name: espressif/cmake_utilities
++      version: '*'
++    source:
++      path: @USB_DEVICE_UAC@
++      type: local
++    targets:
++    - esp32s2
++    - esp32s3
++    - esp32p4
++    - esp32s31
++    - esp32h4
++    version: 1.3.2
++  espressif/usb_host_uac:
++    component_hash: 02f7e669b4dae033347e4523acaed4b8c402290a887878d396811c4bee47cc46
++    dependencies:
++    - name: espressif/cmake_utilities
++      registry_url: https://components.espressif.com
++      require: private
++      version: 0.5.*
++    - name: idf
++      require: private
++      version: '>=5.0'
++    - name: espressif/usb
++      registry_url: https://components.espressif.com
++      require: public
++      rules:
++      - if: idf_version >=6.0
++      - if: target not in ["linux"]
++      version: ^1.0.0
++    source:
++      registry_url: https://components.espressif.com
++      type: service
++    targets:
++    - esp32s2
++    - esp32s3
++    - esp32s31
++    - esp32p4
++    - esp32h4
++    - linux
++    version: 1.5.0
++  idf:
++    source:
++      type: idf
++    version: 5.4.4
++direct_dependencies:
++- espressif/esp_board_manager
++- espressif/esp_boards
++- espressif/esp_lcd_ek79007
++- espressif/esp_lcd_touch_gt911
++- espressif/tinyusb
++- espressif/usb_device_uac
++- idf
++manifest_hash: b4189fe53b2edd376e5c6291591cfd622ca6d66e23d6833268c7a07358ce077e
++target: esp32p4
++version: 2.0.0
+diff --git a/firmware/sdkconfig.defaults b/firmware/sdkconfig.defaults
+new file mode 100644
+index 0000000..805a700
+--- /dev/null
++++ b/firmware/sdkconfig.defaults
+@@ -0,0 +1,9 @@
++# P4X v1.6 silicon, independent Serial/JTAG console and USB OTG HS display.
++CONFIG_ESP32P4_SELECTS_REV_LESS_V3=n
++CONFIG_ESP32P4_REV_MIN_300=y
++CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
++CONFIG_TINYUSB_RHPORT_HS=y
++CONFIG_TUSB_VID=0x303A
++CONFIG_SECURE_FLASH_ENC_ENABLED=n
++CONFIG_SECURE_BOOT=n
++CONFIG_APP_REPRODUCIBLE_BUILD=y
+diff --git a/firmware/sdkconfig.defaults.composite b/firmware/sdkconfig.defaults.composite
+new file mode 100644
+index 0000000..5a12c4c
+--- /dev/null
++++ b/firmware/sdkconfig.defaults.composite
+@@ -0,0 +1,3 @@
++CONFIG_HID_TOUCH_ENABLE=y
++CONFIG_UAC_AUDIO_ENABLE=y
++CONFIG_TUSB_PID=0x2986
+diff --git a/firmware/sdkconfig.defaults.display-only b/firmware/sdkconfig.defaults.display-only
+new file mode 100644
+index 0000000..a34f534
+--- /dev/null
++++ b/firmware/sdkconfig.defaults.display-only
+@@ -0,0 +1,3 @@
++CONFIG_HID_TOUCH_ENABLE=n
++CONFIG_UAC_AUDIO_ENABLE=n
++CONFIG_TUSB_PID=0x2987
+diff --git a/firmware/board/board_amend.yaml b/firmware/board/board_amend.yaml
+new file mode 100644
+index 0000000..bdc1115
+--- /dev/null
++++ b/firmware/board/board_amend.yaml
+@@ -0,0 +1,5 @@
++version: "1.0"
++description: "ESP32-P4X-Function-EV-Board V1.6 kit LCD"
++apply:
++  - lcd_v16.yaml
++  - sdkconfig.defaults.board
+diff --git a/firmware/board/lcd_v16.yaml b/firmware/board/lcd_v16.yaml
+new file mode 100644
+index 0000000..488b67b
+--- /dev/null
++++ b/firmware/board/lcd_v16.yaml
+@@ -0,0 +1,35 @@
++# V1.6 user guide: 7-inch 1024x600 kit, GPIO27 -> RST_LCD and GPIO26 -> PWM.
++# Retain the kit EK79007 driver's timing and DSI/LDO settings from the pinned base.
++devices:
++  - name: ethernet
++    gen_skip: true
++
++  - name: boot_button
++    gen_skip: true
++
++  - name: fs_sdcard
++    gen_skip: true
++
++  - name: camera
++    gen_skip: true
++
++  - name: display_lcd
++    config:
++      reset_gpio_num: 27
++      reset_active_high: 0
++      bits_per_pixel: 16
++      dpi_config:
++        pixel_format: LCD_COLOR_PIXEL_FORMAT_RGB565
++        in_color_format: LCD_COLOR_FMT_RGB565
++        out_color_format: LCD_COLOR_FMT_RGB565
++        video_timing:
++          h_size: 1024
++          v_size: 600
++
++peripherals:
++  - name: gpio_boot_button
++    gen_skip: true
++
++  - name: ledc_backlight
++    config:
++      gpio_num: 26
+diff --git a/firmware/board/sdkconfig.defaults.board b/firmware/board/sdkconfig.defaults.board
+new file mode 100644
+index 0000000..3953fe5
+--- /dev/null
++++ b/firmware/board/sdkconfig.defaults.board
+@@ -0,0 +1,6 @@
++# The official V1.6 guide specifies 16 MB Flash and 32 MB on-package PSRAM.
++CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
++CONFIG_SPIRAM=y
++CONFIG_SPIRAM_MODE_HEX=y
++CONFIG_ESP32P4_SELECTS_REV_LESS_V3=n
++CONFIG_ESP32P4_REV_MIN_300=y
+diff --git a/firmware/patches/0001-lcd-and-usb-diagnostics.patch b/firmware/patches/0001-lcd-and-usb-diagnostics.patch
+new file mode 100644
+index 0000000..f19f198
+--- /dev/null
++++ b/firmware/patches/0001-lcd-and-usb-diagnostics.patch
+@@ -0,0 +1,304 @@
++diff --git a/examples/usb/device/usb_extend_screen/main/app_lcd.c b/examples/usb/device/usb_extend_screen/main/app_lcd.c
++index a91ee76..c906591 100644
++--- a/examples/usb/device/usb_extend_screen/main/app_lcd.c
+++++ b/examples/usb/device/usb_extend_screen/main/app_lcd.c
++@@ -4,6 +4,7 @@
++  * SPDX-License-Identifier: Apache-2.0
++  */
++ 
+++#include <inttypes.h>
++ #include <stdbool.h>
++ #include <stdio.h>
++ #include <string.h>
++@@ -17,6 +18,10 @@
++ #include "esp_log.h"
++ #include "esp_timer.h"
++ 
+++#if CONFIG_IDF_TARGET_ESP32P4
+++#include "esp_lcd_mipi_dsi.h"
+++#endif
+++
++ #if CONFIG_SOC_JPEG_DECODE_SUPPORTED
++ #include "driver/jpeg_decode.h"
++ #else
++@@ -259,24 +264,19 @@ exit:
++ }
++ #endif
++ 
++-void app_lcd_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
+++typedef enum {
+++    LCD_FRAME_JPEG_ERROR,
+++    LCD_FRAME_DRAW_ERROR,
+++    LCD_FRAME_SUBMITTED,
+++    LCD_FRAME_RESULT_COUNT,
+++} lcd_frame_result_t;
+++
+++static lcd_frame_result_t app_lcd_decode_and_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
++ {
++     if (width != s_lcd_width || height != s_lcd_height) {
++         ESP_LOGW(TAG, "Drop JPEG with unexpected size: %ux%u, expected %ux%u",
++                  width, height, s_lcd_width, s_lcd_height);
++-        return;
++-    }
++-
++-    static int fps_count;
++-    static int64_t start_time;
++-    if (start_time == 0) {
++-        start_time = esp_timer_get_time();
++-    }
++-    if (++fps_count == 50) {
++-        int64_t end_time = esp_timer_get_time();
++-        ESP_LOGI(TAG, "fps: %f", 1000000.0 / ((end_time - start_time) / 50.0));
++-        start_time = end_time;
++-        fps_count = 0;
+++        return LCD_FRAME_JPEG_ERROR;
++     }
++ 
++ #if CONFIG_SOC_JPEG_DECODE_SUPPORTED
++@@ -286,14 +286,14 @@ void app_lcd_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
++                                                           &output_width, &output_height);
++     if (layout_ret != ESP_OK) {
++         ESP_LOGD(TAG, "Unsupported JPEG layout: %s", esp_err_to_name(layout_ret));
++-        return;
+++        return LCD_FRAME_JPEG_ERROR;
++     }
++ 
++     size_t expected_output_size = output_width * output_height * s_lcd_bytes_per_pixel;
++     if (expected_output_size > s_decode_buffer_sizes[s_buffer_index]) {
++         ESP_LOGW(TAG, "JPEG output too large: %u > %u", (unsigned)expected_output_size,
++                  (unsigned)s_decode_buffer_sizes[s_buffer_index]);
++-        return;
+++        return LCD_FRAME_JPEG_ERROR;
++     }
++ 
++     uint32_t output_size = 0;
++@@ -302,12 +302,12 @@ void app_lcd_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
++                                                 s_decode_buffer_sizes[s_buffer_index], &output_size);
++     if (decode_ret != ESP_OK) {
++         ESP_LOGD(TAG, "JPEG decode failed: %s", esp_err_to_name(decode_ret));
++-        return;
+++        return LCD_FRAME_JPEG_ERROR;
++     }
++     if (output_size != expected_output_size) {
++         ESP_LOGW(TAG, "Unexpected JPEG output size: %u, expected %u",
++                  (unsigned)output_size, (unsigned)expected_output_size);
++-        return;
+++        return LCD_FRAME_JPEG_ERROR;
++     }
++ 
++     /*
++@@ -328,7 +328,7 @@ void app_lcd_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
++                                                 s_decode_buffer_sizes[s_buffer_index], width, height);
++     if (jpeg_ret != JPEG_ERR_OK) {
++         ESP_LOGD(TAG, "JPEG decode failed: %d", jpeg_ret);
++-        return;
+++        return LCD_FRAME_JPEG_ERROR;
++     }
++     if (s_lcd_frame_format == DEV_DISPLAY_LCD_FRAME_FORMAT_BGR888) {
++         uint8_t *output = s_decode_buffers[s_buffer_index];
++@@ -345,12 +345,70 @@ void app_lcd_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
++                                               s_decode_buffers[s_buffer_index]);
++     if (ret != ESP_OK) {
++         ESP_LOGD(TAG, "LCD draw failed: %s", esp_err_to_name(ret));
++-        return;
+++        return LCD_FRAME_DRAW_ERROR;
++     }
++ 
++     s_buffer_index = (s_buffer_index + 1) % LCD_DECODE_BUFFER_COUNT;
+++    return LCD_FRAME_SUBMITTED;
++ }
++ 
+++void app_lcd_draw(uint8_t *buf, uint32_t len, uint16_t width, uint16_t height)
+++{
+++    lcd_frame_result_t result = app_lcd_decode_and_draw(buf, len, width, height);
+++#if CONFIG_EXAMPLE_ENABLE_PRINT_FPS_RATE_VALUE
+++    static uint32_t total[LCD_FRAME_RESULT_COUNT];
+++    static uint32_t submitted_in_interval;
+++    static int64_t interval_start_us;
+++    int64_t now = esp_timer_get_time();
+++    if (interval_start_us == 0) {
+++        interval_start_us = now;
+++    }
+++    total[result]++;
+++    submitted_in_interval += result == LCD_FRAME_SUBMITTED;
+++    int64_t elapsed_us = now - interval_start_us;
+++    if (elapsed_us >= 5000000) {
+++        ESP_LOGI(TAG, "LCD submissions: %.1f fps, total=%" PRIu32
+++                 ", jpeg_errors=%" PRIu32 ", draw_errors=%" PRIu32,
+++                 submitted_in_interval * 1000000.0 / elapsed_us, total[LCD_FRAME_SUBMITTED],
+++                 total[LCD_FRAME_JPEG_ERROR], total[LCD_FRAME_DRAW_ERROR]);
+++        interval_start_us = now;
+++        submitted_in_interval = 0;
+++    }
+++#else
+++    (void)result;
+++#endif
+++}
+++
+++#if CONFIG_IDF_TARGET_ESP32P4
+++static esp_err_t app_lcd_show_boot_pattern(void)
+++{
+++    if (s_lcd_width != 1024 || s_lcd_height != 600 ||
+++            s_lcd_frame_format != DEV_DISPLAY_LCD_FRAME_FORMAT_RGB565_LE) {
+++        return ESP_OK;
+++    }
+++    static const uint16_t colors[] = {
+++        0xf800, 0x07e0, 0x001f, 0xffff, 0x0000, 0xffe0, 0x07ff, 0xf81f,
+++    };
+++    const size_t color_count = sizeof(colors) / sizeof(colors[0]);
+++    void *framebuffer = NULL;
+++    ESP_RETURN_ON_ERROR(esp_lcd_dpi_panel_get_frame_buffer(s_panel, 1, &framebuffer),
+++                        TAG, "get DPI framebuffer for startup bars");
+++    uint16_t *pixels = framebuffer;
+++    for (size_t x = 0; x < s_lcd_width; x++) {
+++        pixels[x] = colors[x * color_count / s_lcd_width];
+++    }
+++    const size_t row_bytes = s_lcd_width * sizeof(*pixels);
+++    for (size_t y = 1; y < s_lcd_height; y++) {
+++        memcpy(pixels + y * s_lcd_width, pixels, row_bytes);
+++    }
+++    // The DPI driver writes back the hardware framebuffer when submitted directly.
+++    ESP_RETURN_ON_ERROR(esp_lcd_panel_draw_bitmap(s_panel, 0, 0, s_lcd_width, s_lcd_height, framebuffer),
+++                        TAG, "submit startup bars");
+++    ESP_LOGI(TAG, "LCD boot pattern submitted");
+++    return ESP_OK;
+++}
+++#endif
+++
++ esp_err_t app_lcd_get_resolution(uint16_t *width, uint16_t *height)
++ {
++     ESP_RETURN_ON_FALSE(width && height, ESP_ERR_INVALID_ARG, TAG, "resolution output is NULL");
++@@ -411,6 +469,11 @@ esp_err_t app_lcd_init(void)
++ #endif
++ 
++     ESP_RETURN_ON_ERROR(app_lcd_allocate_decode_buffers(), TAG, "allocate decode buffers failed");
+++#if CONFIG_IDF_TARGET_ESP32P4
+++    if (strcmp(display_config->sub_type, "dsi") == 0) {
+++        ESP_RETURN_ON_ERROR(app_lcd_show_boot_pattern(), TAG, "draw LCD boot pattern failed");
+++    }
+++#endif
++     ESP_RETURN_ON_ERROR(app_lcd_backlight_set(100), TAG, "turn LCD backlight on failed");
++     return ESP_OK;
++ #endif
++diff --git a/examples/usb/device/usb_extend_screen/main/app_usb.c b/examples/usb/device/usb_extend_screen/main/app_usb.c
++index b4c8bae..43ef15c 100644
++--- a/examples/usb/device/usb_extend_screen/main/app_usb.c
+++++ b/examples/usb/device/usb_extend_screen/main/app_usb.c
++@@ -96,7 +96,7 @@ esp_err_t app_usb_init(void)
++ // Invoked when device is mounted
++ void tud_mount_cb(void)
++ {
++-    ESP_LOGI(TAG, "USB Mount");
+++    ESP_LOGI(TAG, "USB Mount: %s", tud_speed_get() == TUSB_SPEED_HIGH ? "high-speed" : "full-speed");
++ }
++ 
++ // Invoked when device is unmounted
++diff --git a/examples/usb/device/usb_extend_screen/main/app_vendor.c b/examples/usb/device/usb_extend_screen/main/app_vendor.c
++index 7ef69c6..9f2700c 100644
++--- a/examples/usb/device/usb_extend_screen/main/app_vendor.c
+++++ b/examples/usb/device/usb_extend_screen/main/app_vendor.c
++@@ -153,15 +153,21 @@ void tud_vendor_rx_cb(uint8_t itf, uint8_t const* buffer, uint16_t bufsize)
++                         break;
++                     }
++ 
++-                    static int fps_count = 0;
++-                    static int64_t start_time = 0;
++-                    fps_count++;
++-                    if (fps_count == 50) {
++-                        int64_t end_time = esp_timer_get_time();
++-                        ESP_LOGI(TAG, "Input fps: %f", 1000000.0 / ((end_time - start_time) / 50.0));
++-                        start_time = end_time;
++-                        fps_count = 0;
+++#if CONFIG_EXAMPLE_ENABLE_PRINT_FPS_RATE_VALUE
+++                    static uint32_t input_frames;
+++                    static int64_t input_start_us;
+++                    int64_t now = esp_timer_get_time();
+++                    if (input_start_us == 0) {
+++                        input_start_us = now;
++                     }
+++                    input_frames++;
+++                    if (now - input_start_us >= 5000000) {
+++                        ESP_LOGI(TAG, "Input JPEG headers: %.1f fps",
+++                                 input_frames * 1000000.0 / (now - input_start_us));
+++                        input_start_us = now;
+++                        input_frames = 0;
+++                    }
+++#endif
++ 
++                     current_frame = frame_get_empty();
++                     if (current_frame) {
++diff --git a/examples/usb/device/usb_extend_screen/main/idf_component.yml b/examples/usb/device/usb_extend_screen/main/idf_component.yml
++index ec9042f..200ca3b 100644
++--- a/examples/usb/device/usb_extend_screen/main/idf_component.yml
+++++ b/examples/usb/device/usb_extend_screen/main/idf_component.yml
++@@ -6,9 +6,10 @@ targets:
++ dependencies:
++   idf: ">=5.4.4,!=5.5.0,!=5.5.1,!=5.5.2"
++   espressif/esp_board_manager:
++-    version: "^0.7.1"
+++    version: "==0.7.6"
++     require: public
++-  espressif/tinyusb: "*"
+++  espressif/esp_boards: "==0.7.3"
+++  espressif/tinyusb: "==0.19.0~3"
++   espressif/esp_new_jpeg:
++     version: "^1.0.1"
++     rules:
++diff --git a/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.c b/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.c
++index 4069531..695ae98 100644
++--- a/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.c
+++++ b/examples/usb/device/usb_extend_screen/main/tusb/usb_descriptors.c
++@@ -27,6 +27,7 @@
++ #include <stdlib.h>
++ #include <string.h>
++ #include "esp_check.h"
+++#include "esp_log.h"
++ #include "tusb.h"
++ #include "tusb_config.h"
++ #include "uac_config.h"
++@@ -156,7 +157,7 @@ static char vendor_str[64];
++ char const *string_desc_arr [] = {
++     (const char[]) { 0x09, 0x04 },    // 0: is supported language is English (0x0409)
++     USB_MANUFACTURER,                 // 1: Manufacturer
++-    "ESP_Extern_Screen",              // 2: Product
+++    vendor_str,                       // 2: Product, used by the released Windows IDD
++     "012-2021",                       // 3: Serials, should use chip ID
++     vendor_str,                       // 4: Vendor Interface
++ #if CFG_TUD_HID
++@@ -196,11 +197,12 @@ esp_err_t usb_descriptors_init(uint16_t width, uint16_t height)
++                         ESP_ERR_INVALID_STATE, "usb_desc", "unexpected HID report layout");
++ #endif
++ 
+++    // The Windows IDD interprets Bl in KiB. Round down to stay within the USB receive buffer.
++     int written = snprintf(vendor_str, sizeof(vendor_str),
++                            CONFIG_IDF_TARGET "udisp0_R%ux%u_Ejpg%d_Fps%d_Bl%d",
++                            width, height, CONFIG_USB_EXTEND_SCREEN_JPEG_QUALITY,
++                            CONFIG_USB_EXTEND_SCREEN_MAX_FPS,
++-                           CONFIG_USB_EXTEND_SCREEN_FRAME_LIMIT_B);
+++                           CONFIG_USB_EXTEND_SCREEN_FRAME_LIMIT_B / 1024);
++     ESP_RETURN_ON_FALSE(written > 0 && written < sizeof(vendor_str), ESP_ERR_INVALID_SIZE,
++                         "usb_desc", "vendor descriptor string is too long");
++     return ESP_OK;
++diff --git a/examples/usb/device/usb_extend_screen/main/usb_extend_screen.c b/examples/usb/device/usb_extend_screen/main/usb_extend_screen.c
++index a393bba..63fc249 100644
++--- a/examples/usb/device/usb_extend_screen/main/usb_extend_screen.c
+++++ b/examples/usb/device/usb_extend_screen/main/usb_extend_screen.c
++@@ -8,6 +8,8 @@
++ #include "app_usb.h"
++ #include "usb_descriptors.h"
++ #include "esp_log.h"
+++#include "esp_heap_caps.h"
+++#include "esp_system.h"
++ #include "esp_board_manager.h"
++ #if CONFIG_HID_TOUCH_ENABLE
++ #include "app_touch.h"
++@@ -21,6 +23,9 @@ void app_main(void)
++     ESP_LOGI(TAG, "USB extend screen example");
++     ESP_ERROR_CHECK(esp_board_manager_print_board_info());
++     ESP_ERROR_CHECK(app_lcd_init());
+++    ESP_LOGI(TAG, "Reset reason=%d, PSRAM heap total=%zu free=%zu",
+++             esp_reset_reason(), heap_caps_get_total_size(MALLOC_CAP_SPIRAM),
+++             heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
++     ESP_ERROR_CHECK(app_usb_init());
++ #if CONFIG_HID_TOUCH_ENABLE
++     ESP_ERROR_CHECK(app_touch_init());
+diff --git a/scripts/audit_env.sh b/scripts/audit_env.sh
+new file mode 100755
+index 0000000..b3e4419
+--- /dev/null
++++ b/scripts/audit_env.sh
+@@ -0,0 +1,25 @@
++#!/usr/bin/env bash
++set -euo pipefail
++source "$(dirname -- "${BASH_SOURCE[0]}")/env.sh"
++uname -a
++(cd "$P4_ROOT" && pwd)
++findmnt -n -o FSTYPE,TARGET -T "$P4_ROOT"
++git --version
++python3 --version
++for executable in cmake ninja lsusb; do
++    command -v "$executable" || true
++done
++for port in /dev/ttyACM* /dev/ttyUSB* /dev/serial/by-id; do
++    [[ ! -e "$port" ]] || printf 'Available: %s\n' "$port"
++done
++if command -v lsusb >/dev/null; then
++    lsusb -t
++fi
++printf 'IDF repository: %s\n' "$IDF_PATH"
++check_revision "$P4_IOT" "$IOT_REV"
++check_revision "$IDF_PATH" "$IDF_REV"
++python="$IDF_PYTHON_ENV_PATH/bin/python"
++[[ -x "$python" ]] || fail "缺少项目 Python 环境。"
++"$python" "$IDF_PATH/tools/idf.py" --version
++"$python" -c 'from importlib.metadata import version; print("\n".join(f"{p}=={version(p)}" for p in ("esp-bmgr-assist", "idf-component-manager", "esptool")))'
++git -C "$IDF_PATH" submodule status --recursive
+diff --git a/scripts/bootstrap.sh b/scripts/bootstrap.sh
+new file mode 100755
+index 0000000..9225fbd
+--- /dev/null
++++ b/scripts/bootstrap.sh
+@@ -0,0 +1,37 @@
++#!/usr/bin/env bash
++set -euo pipefail
++source "$(dirname -- "${BASH_SOURCE[0]}")/env.sh"
++
++mkdir -p "$P4_ROOT/upstream" "$IDF_TOOLS_PATH"
++if [[ ! -e "$P4_IOT" ]]; then
++    git init -q "$P4_IOT"
++    git -C "$P4_IOT" remote add origin "$IOT_URL"
++    git -C "$P4_IOT" -c http.sslVerify=true fetch --depth 1 origin "$IOT_REV"
++    git -C "$P4_IOT" switch --detach FETCH_HEAD
++fi
++check_revision "$P4_IOT" "$IOT_REV"
++git -C "$P4_IOT" -c http.sslVerify=true submodule update --init --recursive
++
++if [[ ! -e "$IDF_PATH" ]]; then
++    [[ "$IDF_PATH" == "$P4_ROOT/upstream/esp-idf-$IDF_TAG" ]] ||
++        fail "P4_IDF_PATH 必须指向现有的 $IDF_TAG checkout。"
++    git -c http.sslVerify=true clone --depth 1 --branch "$IDF_TAG" "$IDF_URL" "$IDF_PATH"
++fi
++check_revision "$IDF_PATH" "$IDF_REV"
++if git -C "$IDF_PATH" submodule status --recursive | grep '^[-+U]'; then
++    git -C "$IDF_PATH" -c http.sslVerify=true submodule update --init --recursive --jobs 8 --depth 1
++fi
++
++constraints="$IDF_TOOLS_PATH/espidf.constraints.v5.4.txt"
++if [[ ! -s "$constraints" ]]; then
++    curl -fsSL https://dl.espressif.com/dl/esp-idf/espidf.constraints.v5.4.txt -o "$constraints.tmp"
++    mv "$constraints.tmp" "$constraints"
++fi
++if [[ ! -x "$IDF_PYTHON_ENV_PATH/bin/python" ]]; then
++    python3 -m venv "$IDF_PYTHON_ENV_PATH"
++fi
++"$IDF_PYTHON_ENV_PATH/bin/python" -m pip install --no-cache-dir -c "$constraints" \
++    -r "$P4_ROOT/firmware/python-requirements.lock"
++"$IDF_PYTHON_ENV_PATH/bin/python" "$IDF_PATH/tools/idf_tools.py" --non-interactive install --targets esp32p4
++activate_idf
++idf.py --version
+diff --git a/scripts/build.sh b/scripts/build.sh
+new file mode 100755
+index 0000000..05b1da3
+--- /dev/null
++++ b/scripts/build.sh
+@@ -0,0 +1,75 @@
++#!/usr/bin/env bash
++set -euo pipefail
++source "$(dirname -- "${BASH_SOURCE[0]}")/env.sh"
++
++profile=display-only
++clean=false
++while (($#)); do
++    case "$1" in
++        --clean) clean=true; shift ;;
++        --profile)
++            [[ $# -ge 2 ]] || fail "请指定 --profile display-only 或 composite。"
++            profile="$2"
++            shift 2
++            ;;
++        -h|--help) printf 'Usage: %s [--clean] [--profile display-only|composite]\n' "$0"; exit ;;
++        *) fail "未知参数 $1" ;;
++    esac
++done
++case "$profile" in display-only|composite) ;; *) fail "未知固件配置 $profile" ;; esac
++case "$P4_ROOT" in /mnt/[A-Za-z]/*) fail "请将目录放在 WSL 的 Linux 文件系统中。" ;; esac
++
++mkdir -p "$P4_ROOT/out" "$P4_ROOT/evidence/P2"
++exec 9>"$P4_ROOT/out/.build.lock"
++flock 9
++run_dir=$(mktemp -d "$P4_ROOT/evidence/P2/run-$profile.XXXXXX")
++exec > >(tee "$run_dir/build.log") 2>&1
++trap 'status=$?; printf "Exit: %s\n" "$status" > "$run_dir/status.txt"; printf "Build log: %s (exit %s)\n" "$run_dir/build.log" "$status"' EXIT
++
++check_revision "$P4_IOT" "$IOT_REV"
++check_revision "$IDF_PATH" "$IDF_REV"
++submodules=$(git -C "$IDF_PATH" submodule status --recursive)
++if grep -E '^[-+U]' <<< "$submodules"; then
++    fail "ESP-IDF 子模块状态有误，请运行 scripts/bootstrap.sh。"
++fi
++git -C "$IDF_PATH" diff --exit-code HEAD --quiet ||
++    fail "ESP-IDF checkout 有本地修改，请使用锁定版本的干净 checkout。"
++activate_idf
++python -c "from importlib.metadata import version; import sys; sys.exit(version('esp-bmgr-assist') != '$BMGR_ASSIST_VERSION')" ||
++    fail "esp-bmgr-assist 版本不匹配，请运行 scripts/bootstrap.sh。"
++idf.py --version
++riscv32-esp-elf-gcc -dumpfullversion
++
++if [[ ! -e "$P4_WORK" ]]; then
++    git -C "$P4_IOT" worktree add --detach "$P4_WORK" "$IOT_REV"
++fi
++check_revision "$P4_WORK" "$IOT_REV"
++patch="$P4_ROOT/firmware/patches/0001-lcd-and-usb-diagnostics.patch"
++if git -C "$P4_WORK" diff --quiet HEAD --; then
++    git -C "$P4_WORK" apply --check "$patch"
++    git -C "$P4_WORK" apply "$patch"
++fi
++git -C "$P4_WORK" diff --binary --no-ext-diff HEAD | cmp -s "$patch" - ||
++    fail "工作树包含额外改动，请保留这些改动后用干净的构建工作树重试。"
++
++cd "$P4_EXAMPLE"
++out="$P4_ROOT/out/$profile"
++[[ ! -L "$out" && "$(realpath -m "$out")" == "$out" ]] || fail "意外的输出目录 $out"
++mkdir -p "$out"
++if $clean && [[ -f "$out/CMakeCache.txt" ]]; then
++    idf.py -B "$out" fullclean
++fi
++lock="$P4_ROOT/firmware/dependencies.lock"
++local_component="$P4_WORK/components/usb/usb_device_uac"
++LOCK_SRC="$local_component" python -c 'import os, pathlib, sys; print(pathlib.Path(sys.argv[1]).read_text().replace("@USB_DEVICE_UAC@", os.environ["LOCK_SRC"]), end="")' "$lock" > dependencies.lock
++
++printf 'Generating %s with %s\n' "$BASE_BOARD" "$P4_ROOT/firmware/board"
++idf.py bmgr -b "$BASE_BOARD" -a "$P4_ROOT/firmware/board" | tee "$run_dir/board-generate.log"
++defaults="sdkconfig.defaults;$P4_ROOT/firmware/sdkconfig.defaults;$P4_ROOT/firmware/sdkconfig.defaults.$profile"
++printf 'Building %s in %s\n' "$profile" "$out"
++idf.py -B "$out" -D "SDKCONFIG=$out/sdkconfig" -D "SDKCONFIG_DEFAULTS=$defaults" build
++
++diff -u "$lock" <(LOCK_SRC="$local_component" python -c 'import os, pathlib; print(pathlib.Path("dependencies.lock").read_text().replace(os.environ["LOCK_SRC"], "@USB_DEVICE_UAC@"), end="")')
++cp dependencies.lock "$run_dir/dependencies.lock"
++cp "$out/sdkconfig" "$run_dir/sdkconfig"
++"$P4_ROOT/scripts/inspect_build.sh" "$profile" | tee "$run_dir/inspection.txt"
+diff --git a/scripts/collect_logs.sh b/scripts/collect_logs.sh
+new file mode 100755
+index 0000000..9f3d066
+--- /dev/null
++++ b/scripts/collect_logs.sh
+@@ -0,0 +1,30 @@
++#!/usr/bin/env bash
++set -euo pipefail
++source "$(dirname -- "${BASH_SOURCE[0]}")/env.sh"
++if (( $# < 2 )) || [[ ! "$1" =~ ^P[0-6]$ ]]; then
++    printf 'Usage: %s P0..P6 LOG [LOG...]\n' "$0" >&2
++    exit 2
++fi
++stage="$1"
++shift
++for path in "$@"; do [[ -f "$path" && -r "$path" ]] || fail "无法读取日志 $path"; done
++dest=$(mktemp -d "$P4_ROOT/evidence/$stage/collected-XXXXXX")
++python3 - "$dest" "$P4_ROOT" "$@" <<'PY'
++import re
++import sys
++from pathlib import Path
++
++dest, root, *sources = sys.argv[1:]
++for index, source in enumerate(sources, start=1):
++    data = Path(source).read_text(encoding="utf-8", errors="replace")
++    data = data.replace(root, "<project>").replace(str(Path.home()), "<user-home>")
++    data = re.sub(r"(?i)(?<![a-f0-9])(?:[a-f0-9]{2}[:-]){5}[a-f0-9]{2}(?![a-f0-9])", "<MAC>", data)
++    data = re.sub(r"(?im)^([^\n]*(?:serial(?: number)?|chip id|device instance(?: id)?|token|password|secret|api[_ -]?key)\s*[=:]).*$",
++                  r"\1 <redacted>", data)
++    data = re.sub(r"(?i)(USB\\VID_[\da-f]{4}&PID_[\da-f]{4}(?:&MI_[\da-f]{2})?\\)\S+",
++                  r"\1<instance>", data)
++    data = re.sub(r"/dev/serial/by-id/\S+", "/dev/serial/by-id/<instance>", data)
++    data = re.sub(r"(?i)(https?://)[^/\s:@]+:[^/\s@]+@", r"\1<credentials>@", data)
++    (Path(dest) / f"log-{index:02}.txt").write_text(data, encoding="utf-8")
++PY
++printf '脱敏日志位于 %s。公开前请核对内容。\n' "$dest"
+diff --git a/scripts/env.sh b/scripts/env.sh
+new file mode 100644
+index 0000000..eff2578
+--- /dev/null
++++ b/scripts/env.sh
+@@ -0,0 +1,39 @@
++#!/usr/bin/env bash
++# Source this file from the build and hardware scripts.
++P4_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
++source "$P4_ROOT/firmware/versions.env"
++
++export IDF_PATH="${P4_IDF_PATH:-$P4_ROOT/upstream/esp-idf-$IDF_TAG}"
++export IDF_TOOLS_PATH="${P4_IDF_TOOLS_PATH:-$P4_ROOT/upstream/.idf-tools}"
++export IDF_PYTHON_ENV_PATH="$P4_ROOT/upstream/.idf-venv"
++export IDF_COMPONENT_CACHE_PATH="$P4_ROOT/upstream/.component-cache"
++export ESP_BOARD_MANAGER_DISABLE_AUTO_AMEND=1
++P4_IOT="$P4_ROOT/upstream/esp-iot-solution"
++P4_WORK="$P4_ROOT/upstream/usb-display-work"
++P4_EXAMPLE="$P4_WORK/$EXAMPLE_REL"
++
++fail() {
++    printf '%s\n' "$*" >&2
++    return 1
++}
++
++check_revision() {
++    local path="$1" expected="$2" actual
++    actual="$(git -C "$path" rev-parse HEAD 2>/dev/null)" ||
++        fail "缺少 checkout $path，请先运行 scripts/bootstrap.sh。" || return
++    [[ "$expected" == "$actual" ]] ||
++        fail "$path 的 HEAD 是 $actual，锁定版本为 $expected。"
++}
++
++activate_idf() {
++    check_revision "$IDF_PATH" "$IDF_REV" || return
++    [[ -x "$IDF_PYTHON_ENV_PATH/bin/python" ]] ||
++        fail "缺少项目 Python 环境，请先运行 scripts/bootstrap.sh。" || return
++    export PATH="$IDF_PYTHON_ENV_PATH/bin:$PATH"
++    # ESP-IDF export scripts reference unset variables in some releases.
++    local status=0
++    set +u
++    source "$IDF_PATH/export.sh" || status=$?
++    set -u
++    return "$status"
++}
+diff --git a/scripts/flash.sh b/scripts/flash.sh
+new file mode 100755
+index 0000000..5c8a97e
+--- /dev/null
++++ b/scripts/flash.sh
+@@ -0,0 +1,57 @@
++#!/usr/bin/env bash
++set -euo pipefail
++source "$(dirname -- "${BASH_SOURCE[0]}")/env.sh"
++
++usage() {
++    printf 'Usage: %s identify PORT\n       %s flash PORT EXPECTED_MAC [display-only|composite]\n' "$0" "$0"
++}
++if [[ "${1:-}" == --help ]]; then usage; exit; fi
++if (( $# < 2 || $# > 4 )); then usage >&2; exit 2; fi
++mode="$1"
++port="$2"
++expected_mac="${3:-}"
++profile="${4:-display-only}"
++case "$mode" in
++    identify) [[ $# == 2 ]] || fail "identify 只接收端口。" ;;
++    flash)
++        [[ "$expected_mac" =~ ^([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}$ ]] ||
++            fail "请输入已识别设备的完整 MAC。"
++        case "$profile" in display-only|composite) ;; *) fail "未知固件配置 $profile" ;; esac
++        ;;
++    *) usage >&2; exit 2 ;;
++esac
++real_port="$(readlink -e "$port")" || fail "找不到串口 $port，请连接并透传 V1.6 Serial/JTAG。"
++[[ -c "$real_port" && "$real_port" =~ ^/dev/tty(ACM|USB)[0-9]+$ && -r "$real_port" && -w "$real_port" ]] ||
++    fail "要求有读写权限的 USB 稳定串口路径。"
++activate_idf >&2
++
++if [[ "$mode" == flash ]]; then
++    out="$P4_ROOT/out/$profile"
++    (
++        cd "$out"
++        sha256sum --strict --check SHA256SUMS
++    )
++fi
++
++private="$P4_ROOT/evidence/P3/private"
++umask 077
++mkdir -p "$private"
++identity=$(mktemp "$private/identity.XXXXXX")
++python -m esptool --chip auto --port "$real_port" flash_id | tee "$identity"
++grep -Eiq '^Chip is ESP32-P4.*\(revision v3\.[1-9][0-9]*\)' "$identity" ||
++    fail "需要实际识别到 ESP32-P4 修订版 v3.1 或更新的 v3.x。"
++grep -Eiq '^Detected flash size:[[:space:]]*16[[:space:]]*MB' "$identity" ||
++    fail "目标 Flash 容量与 V1.6 的 16 MB 不符。"
++if [[ "$mode" == identify ]]; then
++    printf '目标身份已读出。原始记录位于 %s\n' "$identity"
++    exit
++fi
++actual_mac="$(sed -nE 's/^MAC:[[:space:]]*(([[:xdigit:]]{2}:){5}[[:xdigit:]]{2}).*/\1/p' "$identity")"
++[[ "${actual_mac,,}" == "${expected_mac,,}" && "$(readlink -e "$port")" == "$real_port" ]] ||
++    fail "芯片 MAC 或串口当前映射与已确认的设备不一致。"
++
++cd "$P4_EXAMPLE"
++defaults="sdkconfig.defaults;$P4_ROOT/firmware/sdkconfig.defaults;$P4_ROOT/firmware/sdkconfig.defaults.$profile"
++log=$(mktemp "$private/flash-monitor.XXXXXX")
++idf.py -B "$out" -D "SDKCONFIG=$out/sdkconfig" -D "SDKCONFIG_DEFAULTS=$defaults" \
++    -p "$real_port" flash monitor |& tee "$log"
+diff --git a/scripts/inspect_build.py b/scripts/inspect_build.py
+new file mode 100644
+index 0000000..33d7739
+--- /dev/null
++++ b/scripts/inspect_build.py
+@@ -0,0 +1,112 @@
++import hashlib
++import json
++import sys
++from pathlib import Path
++
++from elftools.elf.elffile import ELFFile
++
++
++def require(condition, message):
++    if not condition:
++        raise SystemExit(message)
++
++
++def descriptor_bytes(elf, name):
++    symbols = elf.get_section_by_name(".symtab")
++    symbol, = symbols.get_symbol_by_name(name)
++    section = elf.get_section(symbol["st_shndx"])
++    offset = symbol["st_value"] - section["sh_addr"]
++    return section.data()[offset:offset + symbol["st_size"]]
++
++
++def verify_usb(elf_path, profile, pid):
++    with elf_path.open("rb") as stream:
++        elf = ELFFile(stream)
++        device = descriptor_bytes(elf, "desc_device")
++        config = descriptor_bytes(elf, "desc_fs_configuration")
++        strings = descriptor_bytes(elf, "string_desc_arr")
++        pointer_size = elf.elfclass // 8
++    require(len(device) == 18 and device[:2] == bytes([18, 1]), "USB device descriptor malformed")
++    require(int.from_bytes(device[8:10], "little") == 0x303A, "USB VID differs")
++    require(int.from_bytes(device[10:12], "little") == pid, "USB PID differs")
++    require(device[15] == 2 and len(strings) >= 5 * pointer_size
++            and strings[2 * pointer_size:3 * pointer_size] == strings[4 * pointer_size:5 * pointer_size],
++            "USB product and vendor interface must share the display metadata")
++    require(int.from_bytes(config[2:4], "little") == len(config), "USB configuration length differs")
++    interfaces = {}
++    vendor_endpoints = {}
++    offset = 0
++    interface = None
++    while offset < len(config):
++        length, kind = config[offset:offset + 2]
++        require(2 <= length <= len(config) - offset, "USB descriptor length invalid")
++        desc = config[offset:offset + length]
++        if kind == 4:
++            interface = desc[2]
++            interfaces[interface] = desc[5]
++            if interface == 0:
++                require(desc[8] == 4, "Vendor interface string index differs")
++        if kind == 5 and interface == 0:
++            require(desc[3] & 3 == 2, "USB vendor endpoint is not bulk")
++            vendor_endpoints[desc[2]] = int.from_bytes(desc[4:6], "little")
++        offset += length
++    require(config[4] == len(interfaces), "Interface count differs")
++    require(interfaces.get(0) == 0xFF and vendor_endpoints == {0x01: 512, 0x81: 512},
++            f"Vendor HS descriptor differs: {interfaces}, {vendor_endpoints}")
++    expected_classes = {0xFF} if profile == "display-only" else {0xFF, 1, 3}
++    require(set(interfaces.values()) == expected_classes, f"Unexpected USB interfaces: {interfaces}")
++    print(f"USB ELF descriptor: 303A:{pid:04X}, classes={interfaces}, vendor bulk OUT 01 / IN 81 at 512 B")
++
++
++def main():
++    root, profile = Path(sys.argv[1]), sys.argv[2]
++    out = root / "out" / profile
++    sdkconfig = (out / "sdkconfig").read_text().splitlines()
++    config = dict(line.split("=", 1) for line in sdkconfig if line.startswith("CONFIG_"))
++    composite = profile == "composite"
++    pid = 0x2986 if composite else 0x2987
++    expected = {
++        "CONFIG_IDF_TARGET": '"esp32p4"',
++        "CONFIG_ESP32P4_REV_MIN_FULL": "300",
++        "CONFIG_ESP32P4_REV_MAX_FULL": "399",
++        "CONFIG_ESPTOOLPY_FLASHSIZE_16MB": "y",
++        "CONFIG_SPIRAM": "y",
++        "CONFIG_SPIRAM_MODE_HEX": "y",
++        "CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG": "y",
++        "CONFIG_APP_REPRODUCIBLE_BUILD": "y",
++        "CONFIG_TINYUSB_RHPORT_HS": "y",
++        "CONFIG_ESP_BOARD_DEV_DISPLAY_LCD_SUPPORT": "y",
++    }
++    for key, value in expected.items():
++        require(config.get(key) == value, f"{key} expected {value}, found {config.get(key)}")
++    for key in ["CONFIG_ESP32P4_SELECTS_REV_LESS_V3", "CONFIG_SECURE_BOOT", "CONFIG_SECURE_FLASH_ENC_ENABLED"]:
++        require(config.get(key) != "y", f"{key} must be disabled")
++    for key in ["CONFIG_HID_TOUCH_ENABLE", "CONFIG_UAC_AUDIO_ENABLE"]:
++        require((config.get(key) == "y") == composite, f"{key} differs for {profile}")
++    require(int(config["CONFIG_TUSB_VID"], 16) == 0x303A, "Configured VID differs")
++    require(int(config["CONFIG_TUSB_PID"], 16) == pid, "Configured PID differs")
++    print(f"Profile: {profile} | ESP32-P4 revision 3.00–3.99 | 16 MB flash | Hex PSRAM | Serial/JTAG console")
++    print(f"Advertised JPEG quality: {config['CONFIG_USB_EXTEND_SCREEN_JPEG_QUALITY']}; "
++          f"FPS cap: {config['CONFIG_USB_EXTEND_SCREEN_MAX_FPS']}")
++    elf = out / "usb_touch_screen.elf"
++    verify_usb(elf, profile, pid)
++    meta = json.loads((out / "flasher_args.json").read_text())
++    require(meta["extra_esptool_args"]["chip"] == "esp32p4", "Flash chip differs")
++    require(meta["flash_settings"]["flash_size"] == "16MB", "Flash capacity differs")
++    print(f"Flash settings: {json.dumps(meta['flash_settings'], sort_keys=True)}")
++    for address, path in meta["flash_files"].items():
++        print(f"{address} {path}")
++    files = [*meta["flash_files"].values(), "flasher_args.json", "flash_args", "sdkconfig", elf.name]
++    hashes = []
++    for name in files:
++        path = out / name
++        require(path.is_file() and path.resolve().is_relative_to(out.resolve()), f"Missing or invalid {path}")
++        data = path.read_bytes()
++        digest = hashlib.sha256(data).hexdigest()
++        print(f"{len(data):>9} B  {digest}  {path}")
++        hashes.append(f"{digest}  {name}")
++    (out / "SHA256SUMS").write_text("\n".join(hashes) + "\n")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/scripts/inspect_build.sh b/scripts/inspect_build.sh
+new file mode 100755
+index 0000000..bd1c2d6
+--- /dev/null
++++ b/scripts/inspect_build.sh
+@@ -0,0 +1,6 @@
++#!/usr/bin/env bash
++set -euo pipefail
++source "$(dirname -- "${BASH_SOURCE[0]}")/env.sh"
++profile="${1:-display-only}"
++case "$profile" in display-only|composite) ;; *) fail "未知固件配置 $profile" ;; esac
++exec "$IDF_PYTHON_ENV_PATH/bin/python" "$P4_ROOT/scripts/inspect_build.py" "$P4_ROOT" "$profile"
+diff --git a/scripts/smoke_windows_display.ps1 b/scripts/smoke_windows_display.ps1
+new file mode 100644
+index 0000000..f17efad
+--- /dev/null
++++ b/scripts/smoke_windows_display.ps1
+@@ -0,0 +1,56 @@
++$ErrorActionPreference = "Stop"
++$ProgressPreference = "SilentlyContinue"
++[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
++$devices = @(Get-PnpDevice -PresentOnly | Where-Object InstanceId -Like "USB\VID_303A&PID_2987*")
++if ($devices.Count -ne 1 -or $devices[0].Status -ne "OK") { throw "The ESP32-P4 display driver is not active." }
++"USB display driver: $($devices[0].FriendlyName), status $($devices[0].Status)"
++Add-Type -AssemblyName System.Windows.Forms
++Add-Type -AssemblyName System.Drawing
++$screens = [Windows.Forms.Screen]::AllScreens
++"Active screens: $($screens.Count)"
++foreach ($screen in $screens) {
++    "$($screen.DeviceName) $($screen.Bounds.Width)x$($screen.Bounds.Height) at $($screen.Bounds.X),$($screen.Bounds.Y) Primary=$($screen.Primary)"
++}
++$destination = @($screens | Where-Object { !$_.Primary -and $_.Bounds.Width -eq 1024 -and $_.Bounds.Height -eq 600 })
++if ($screens.Count -ne 2 -or $destination.Count -ne 1) { throw "Could not uniquely identify the active 1024x600 extended screen." }
++$primary = [Windows.Forms.Screen]::PrimaryScreen.WorkingArea
++$secondary = $destination[0].Bounds
++$form = [Windows.Forms.Form]::new()
++$form.Text = "ESP32-P4 USB Display Test"
++$form.StartPosition = "Manual"
++$form.Bounds = [Drawing.Rectangle]::new($primary.Left + 40, $primary.Top + 40, 600, 320)
++$form.BackColor = [Drawing.Color]::MidnightBlue
++$form.TopMost = $true
++$label = [Windows.Forms.Label]::new()
++$label.Dock = 'Fill'
++$label.ForeColor = [Drawing.Color]::White
++$label.Font = [Drawing.Font]::new('Segoe UI', 26, [Drawing.FontStyle]::Bold)
++$label.TextAlign = 'MiddleCenter'
++$form.Controls.Add($label)
++$script:p4_moved = $false
++$watch = [Diagnostics.Stopwatch]::StartNew()
++$timer = [Windows.Forms.Timer]::new()
++$timer.Interval = 120
++$timer.Add_Tick({
++    $seconds = $watch.Elapsed.TotalSeconds
++    if (!$script:p4_moved -and $seconds -gt 2) {
++        $form.Bounds = [Drawing.Rectangle]::new($secondary.Left + 18, $secondary.Top + 18,
++            $secondary.Width - 36, $secondary.Height - 36)
++        $script:p4_moved = $true
++        $onScreen = [Windows.Forms.Screen]::FromHandle($form.Handle).DeviceName
++        $script:p4_move_message = "Test window moved to $onScreen at $($form.Location.X),$($form.Location.Y)"
++    }
++    $label.Text = "ESP32-P4 USB Display`r`n1024 x 600`r`n{0:0.0} s" -f $seconds
++    if ($seconds -ge 30) { $form.Close() }
++})
++try {
++    $timer.Start()
++    [Windows.Forms.Application]::Run($form)
++} finally {
++    $timer.Stop()
++    $timer.Dispose()
++    $form.Dispose()
++}
++if (!$script:p4_moved) { throw "The test window closed before moving." }
++$script:p4_move_message
++"Test window completed after $([Math]::Round($watch.Elapsed.TotalSeconds, 1)) seconds."
+diff --git a/scripts/verify_windows_usb.ps1 b/scripts/verify_windows_usb.ps1
+new file mode 100644
+index 0000000..ea48cd6
+--- /dev/null
++++ b/scripts/verify_windows_usb.ps1
+@@ -0,0 +1,76 @@
++# Query the negotiated USB 2.0 speed through the immediate parent hub.
++$ErrorActionPreference = "Stop"
++[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
++$displayDevices = @(Get-PnpDevice -PresentOnly | Where-Object InstanceId -Like "USB\VID_303A&PID_2987*")
++if ($displayDevices.Count -ne 1) { throw "Expected exactly one connected 303A:2987 device." }
++$target = $displayDevices[0].InstanceId
++$parent = (Get-PnpDeviceProperty -InstanceId $target -KeyName DEVPKEY_Device_Parent).Data
++$address = (Get-PnpDeviceProperty -InstanceId $target -KeyName DEVPKEY_Device_Address).Data
++if ($address -lt 1 -or $address -gt 255) { throw "Invalid USB hub port from PnP." }
++
++Add-Type -TypeDefinition @'
++using System;
++using System.ComponentModel;
++using System.Runtime.InteropServices;
++using Microsoft.Win32.SafeHandles;
++
++public static class P4DisplayUsb
++{
++    private const uint IoctlGetConnectionInfoEx = (0x22u << 16) | (274u << 2);
++    private static Guid hubGuid = new Guid("f18a0e88-c30c-11d0-8815-00a0c906bed8");
++
++    [DllImport("cfgmgr32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
++    private static extern uint CM_Get_Device_Interface_List_SizeW(out uint count, ref Guid guid,
++        string deviceId, uint flags);
++
++    [DllImport("cfgmgr32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
++    private static extern uint CM_Get_Device_Interface_ListW(ref Guid guid, string deviceId,
++        [Out] char[] names, uint count, uint flags);
++
++    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
++    private static extern SafeFileHandle CreateFileW(string path, uint access, uint share,
++        IntPtr security, uint disposition, uint flags, IntPtr template);
++
++    [DllImport("kernel32.dll", SetLastError = true)]
++    private static extern bool DeviceIoControl(SafeFileHandle handle, uint code, byte[] input,
++        uint inputLength, [Out] byte[] output, uint outputLength, out uint returned, IntPtr overlapped);
++
++    public static string Query(string parentId, uint port)
++    {
++        uint count;
++        uint status = CM_Get_Device_Interface_List_SizeW(out count, ref hubGuid, parentId, 0);
++        if (status != 0 || count <= 1)
++            throw new InvalidOperationException("No present interface for the parent USB hub. CR=" + status);
++        char[] names = new char[count];
++        status = CM_Get_Device_Interface_ListW(ref hubGuid, parentId, names, count, 0);
++        if (status != 0)
++            throw new InvalidOperationException("Cannot read USB hub interface. CR=" + status);
++        string[] paths = new string(names).Split(new[] {'\0'}, StringSplitOptions.RemoveEmptyEntries);
++        if (paths.Length != 1)
++            throw new InvalidOperationException("USB hub interface is ambiguous.");
++        using (SafeFileHandle handle = CreateFileW(paths[0], 0xc0000000u, 3, IntPtr.Zero, 3, 0, IntPtr.Zero))
++        {
++            if (handle.IsInvalid) throw new Win32Exception(Marshal.GetLastWin32Error());
++            byte[] request = new byte[1024];
++            BitConverter.GetBytes(port).CopyTo(request, 0);
++            byte[] response = new byte[request.Length];
++            uint returned;
++            if (!DeviceIoControl(handle, IoctlGetConnectionInfoEx, request, (uint)request.Length,
++                    response, (uint)response.Length, out returned, IntPtr.Zero))
++                throw new Win32Exception(Marshal.GetLastWin32Error());
++            // ULONG port followed by the 18-byte USB_DEVICE_DESCRIPTOR, configuration and speed.
++            if (returned < 24 || BitConverter.ToUInt32(response, 0) != port ||
++                response[4] != 18 || response[5] != 1 ||
++                BitConverter.ToUInt16(response, 12) != 0x303a || BitConverter.ToUInt16(response, 14) != 0x2987)
++                throw new InvalidOperationException("Hub response does not describe the target 303A:2987.");
++            string[] speeds = {"Low-Speed (1.5 Mbps)", "Full-Speed (12 Mbps)", "High-Speed (480 Mbps)"};
++            int speed = response[23];
++            if (speed >= speeds.Length) throw new InvalidOperationException("Unexpected USB speed " + speed);
++            return String.Format("303A:2987 on hub port {0}: {1} (speed={2}, CurrentConfigurationValue={3})",
++                port, speeds[speed], speed, response[22]);
++        }
++    }
++}
++'@
++
++[P4DisplayUsb]::Query($parent, [uint32]$address)
+diff --git a/docs/ACCEPTANCE.md b/docs/ACCEPTANCE.md
+new file mode 100644
+index 0000000..9e72938
+--- /dev/null
++++ b/docs/ACCEPTANCE.md
+@@ -0,0 +1,40 @@
++# 实机验收记录
++
++本轮已完成开机色条、1024×600 模式和实际扩展桌面短测。按用户选择先交付可用结果。实体拔插、连续运行及各增强测试暂缓。每项记录测试人、日期、Windows 版本、板卡丝印与脱敏标识、实际芯片修订版、固件 SHA256、驱动版本及证据相对路径。
++
++| ID | 操作与通过条件 | 证据及待填记录 | 结果 |
++|---|---|---|---|
++| T01 | HS 线留空启动，看八色条。Windows 扩展后以 1024×600 显示全屏网格、四角标记及 RGB。边界齐全，无错行、裁剪和明显色差 | 色条由用户目视确认，串口 1024×600 RGB565_LE；Windows 1024×600 活动画面实测，四角全屏图待补 | NOT_RUN（部分通过） |
++| T02 | 在 Windows 选扩展，拖动记事本或终端到副屏，输入、滚动并持续刷新 | Windows 报告独立副屏。测试窗口从主屏移入，用户确认计时文本持续刷新。[现场记录](../evidence/P4/extended-desktop-test.txt) | PASS |
++| T03 | 每段运行 60 秒，依次静态、滚动、播放视频；记录每段输入及提交帧率、JPEG/绘制错误、负载和端到端延迟 | 串口统计、Windows 任务管理器及延迟测量方法 | NOT_RUN |
++| T04 | 实物确认控制器与排线后用 composite。通过 Windows 平板电脑设置映射副屏，点四角、中心及双指；支持时试最多五点 | 触摸 IC、映射截图、触点数量、方向和边缘误差。硬件确认无触摸时记 SKIPPED | NOT_RUN |
++| T05 | 保持 Serial/JTAG 日志，拔插 HS 线 10 次，每次等显示设置更新并拖窗。记录恢复耗时、USB mount 和任何异常 | 逐次表；十次均能恢复，无永久故障 | NOT_RUN |
++| T06 | 使用扩展桌面连续 2 小时，包含静态、滚动、视频。每 30 分钟看画面、错误计数及有没有启动日志重现 | 开始/结束时间和日志；无异常复位、持续花屏或永久失联 | NOT_RUN |
++| T07 | 休眠和唤醒 3 次，记录恢复耗时、成功率和重连需求 | 次数、成功数、Windows/串口日志 | NOT_RUN |
++| T08 | 在同一板、同一驱动、同一工作负载对照 FPS 60 / JPEG 6 与 FPS 30 / JPEG 4，比较 CPU、延迟、错误和字体可读性 | 两套固件散列、有效 sdkconfig、每段采样、照片及结论 | NOT_RUN |
++
++T03 的提交帧率只反映设备向 LCD 驱动提交成功的速率。拍摄主屏与副屏中的同一时钟或帧编号，按摄像取样精度记录相对延迟；Windows 端实际 JPEG 吞吐及 USB 总线负载要使用独立测量。60 FPS 是描述符声明上限。
++
++T08 基线通过后，在所选 `firmware/sdkconfig.defaults.<配置>` 中加入下列参数，执行 `scripts/build.sh --clean --profile <配置>` 后保存新的配置及哈希。测试完移除这两行，再以 `--clean` 重建发布基线。
++
++```ini
++CONFIG_USB_EXTEND_SCREEN_MAX_FPS=30
++CONFIG_USB_EXTEND_SCREEN_JPEG_QUALITY=4
++```
++
++## T05/T07 待填
++
++| 轮次 | HS 拔插恢复耗时及现象 | 休眠恢复耗时及现象 |
++|---|---|---|
++| 1 |  |  |
++| 2 |  |  |
++| 3 |  |  |
++| 4 |  |  |
++| 5 |  |  |
++| 6 |  |  |
++| 7 |  |  |
++| 8 |  |  |
++| 9 |  |  |
++| 10 |  |  |
++
++升级门槛依次为 CODE_READY、DEVICE_READY、MVP_ACCEPTED，并在完成增强测试后记录 ENHANCED。MVP 需真实烧录启动、1024×600 LCD、USB HS、Windows 扩展，并通过 T01、T02、T05、T06。
+diff --git a/docs/BASELINE.md b/docs/BASELINE.md
+new file mode 100644
+index 0000000..f917f29
+--- /dev/null
++++ b/docs/BASELINE.md
+@@ -0,0 +1,20 @@
++# 环境与版本基线
++
++工作区位于 WSL2 Ubuntu 的 ext4，`/home/yzj/project/esp32p4-mon`。启用工具前的 Python 为 3.11.15，Git 2.34.1。原任务书保留，以 [原始文件散列](../evidence/P0/original-task.sha256) 记录。任务根目录原本没有可用的 Git 仓库。固定上游位于 `upstream/esp-iot-solution`，构建使用独立工作树 `upstream/usb-display-work`。ESP-IDF checkout、venv、所需新增工具均位于 `upstream/`，复用了已有的匹配 ROM ELF。
++
++| 项目 | 锁定值和说明 |
++|---|---|
++| 官方示例 | `f721a40c032f6168844fe3bd321bc182e2593348`，官方 master 的 2026-11-19 提交。示例 manifest 版本 0.3.0，无 Git 子模块 |
++| 原 ESP-IDF | `1bfe1595fa6bc64dcd5241047dc677cc194ecdaf`，`v5.4.2-610-g1bfe1595fa-dirty`。原 checkout 中 `export.sh` 已有本地修改。默认激活找不到 3.11 venv，旧 3.10 venv 的链接实际进入 Python 3.11 |
++| 构建 ESP-IDF | `v5.4.4`，`296b6eab9445fd720e71aecab961e2d3fbca9944`。递归子模块与 Git 锁定一致 |
++| RISC-V 工具链 | `esp-14.2.0_20260121`。由 IDF tools manifest 指定 |
++| Python | 3.11.15，现场版本见 [Python 依赖锁](../firmware/python-requirements.lock)；Component Manager 2.5.2，esptool 4.14.0 |
++| Board Manager | CLI 插件 `esp-bmgr-assist` 0.8.4，组件 `esp_board_manager` 0.7.6，`esp_boards` 0.7.3 |
++| LCD 与 USB | EK79007 1.0.4，TinyUSB 0.19.0~3；registry 组件及哈希详见 [组件锁](../firmware/dependencies.lock) |
++| Windows IDD | 1.2.25.2，2025-02-24，amd64。散列与本机签名状态见 [P4](../evidence/P4/) |
++
++`idf.py bmgr -l` 在 0.7.6 上成功，见 [板卡列表](../evidence/P0/board-list.log)。`idf.py bmgr -b esp32_p4_function_ev_board -a ...` 生成成功，见 [板级生成日志](../evidence/P1/board-generate.log)。命令、实际退出和复现路径见 [任务记录](../TASKS.md)。
++
++### 维护上游基线
++
++构建脚本验证两个 checkout，工作树仅应用 [项目补丁](../firmware/patches/0001-lcd-and-usb-diagnostics.patch)。项目交付文件的新增差异见 [交付 diff](../evidence/P6/delivery.diff)，现有任务书保持原路径。配置变更见 [有效配置差异](../evidence/P2/sdkconfig-profiles.diff) 和 [关键配置](../evidence/P2/effective-config.txt)。
+diff --git a/docs/BOARD_V16_AUDIT.md b/docs/BOARD_V16_AUDIT.md
+new file mode 100644
+index 0000000..cfff80f
+--- /dev/null
++++ b/docs/BOARD_V16_AUDIT.md
+@@ -0,0 +1,25 @@
++# ESP32-P4X V1.6 板级审核
++
++目标为 ESP32-P4X-Function-EV-Board V1.6、ESP32-P4NRW32X 和套件 7 英寸 MIPI DSI LCD。Board Manager 0.7.6 配合 `esp_boards` 0.7.3 列出 43 项，其中旧定义对应 v1.5.2，`esp32_p4x_c5_function_ev` 对应另一块板。使用旧定义加 [V1.6 amend](../firmware/board/board_amend.yaml)，生成代码记录见 [P1](../evidence/P1/)。[V1.6 用户手册](https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4x-function-ev-board/user_guide.html) · [Board Manager 旧版参考](https://docs.espressif.com/projects/esp-board-manager/en/latest/references/boards/esp32_p4_function_ev_board.html)
++
++| 项目 | V1.6 官方资料 | 锁定旧定义与本项目配置 | 风险及验证 |
++|---|---|---|---|
++| 芯片与内存 | V1.6 资料标注 Rev 3.1 或以上，SPI Flash 16 MB，PSRAM 32 MB | 旧定义 16 MB、Hex PSRAM 200 MHz。amend 明确启用 Rev ≥3.0 路径和 16 MB。镜像头范围 3.00–3.99 | 烧录仅在实际识别到 V1.6、3.1–3.99 和 16 MB 后执行。以 boot log 核对 PSRAM |
++| DSI 布线与电源 | DSI 连 LCD 转接板 J3，使用反向 FFC。LCD 转接板 J1 独立 USB 供电；采用主板 5 V 供电时，按手册接 5 V/GND | DSI bus 0、双 lane、1000 Mbps/lane。内部 LDO3 2500 mV 用于 D-PHY。LCD 转接板的 5 V 独立于 D-PHY LDO | 上电前检查 FFC 方向和 DSI/CSI 标签，查看屏幕初始化和背光 |
++| LCD 与初始化 | 套件 7 英寸 1024×600，资料附 EK79007AD 和 LCD 转接板原理图 | 使用固定版 EK79007 驱动、虚拟通道 0、DPI 48 MHz、H porch/pulse 120/10/120、V 20/1/20、RGB565_LE、1 个 DPI FB，保留 DMA2D | 手册确认面板型号和连接，时序来自已锁定的同套件板级定义。实机通过色条确认色序、横屏和边界 |
++| LCD 复位与背光 | J1 GPIO27→转接板 J6 RST_LCD、GPIO26→J6 PWM | GPIO27 低有效；GPIO26 由 LEDC 驱动并在初始化后开启。amend 显式指定两脚 | 两根杜邦线均需接。转接板供电或 PWM 缺失可造成黑屏 |
++| 触摸 I²C 与复位 | V1.6 手册确认电容触摸；板头有 GPIO7/8。所列主板参考设计 ZIP 本次返回 HTML | 旧定义 GT911、I²C0 SDA7/SCL8，候选 7 位地址 0x5D/0x14；无专用复位和中断 GPIO，轮询读取，镜像 X/Y。纯显示版关闭 HID | 现场核对触控控制器、排线与复位走线。复合版仅用于验证上述候选配置。不得为排障盲设复位脚 |
++| USB 连接 | FS Type-C、Serial/JTAG Type-C、HS Type-C 各有用途。HS Type-A 与 HS Type-C 共享控制器 | 显示切到 OTG UTMI HS，日志和烧录走 Serial/JTAG。HS Type-A 留空 | P3 确认串口，P4 在 Windows 插 HS Type-C 并核对描述符和速度 |
++| 其他外设 | V1.6 带网口、microSD、CSI、音频 | 旧定义的 EMAC TXD1 和 BOOT 共用 GPIO35。amend 跳过 Ethernet、BOOT、SD 和 CSI 设备，未改动屏相关线路 | 最终生成报告无 IO 冲突。复合版的触摸及音频仍需实测 |
++
++资料见 [V1.6 硬件说明与接线](https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4x-function-ev-board/user_guide.html) · [V1.6 芯片与 Flash 规格](https://docs.espressif.com/projects/arduino-esp32/en/latest/boards/ESP32-P4X-Function-EV-Board.html) · [LCD 转接板原理图](https://dl.espressif.com/dl/schematics/esp32-p4-function-ev-board-lcd-subboard-schematics.pdf) · [LCD 模组规格](https://dl.espressif.com/dl/schematics/display_datasheet.pdf)
++
++## 内存与静态 USB 核验
++
++可见 DPI 帧 1,228,800 B。硬件 JPEG 解码预留三帧，每帧按 1024×608×2 B 分配，合计 3,735,552 B。六个输入缓冲合计 1,800,000 B。三项约 6.45 MiB，实际 PSRAM 占用还包括对齐、堆、任务和其他对象。IDF 的 JPEG 输入和输出分配使用 PSRAM。启动日志报告可用 PSRAM 堆，板载 32 MB 的运行证据取自 IDF PSRAM 初始化行。
++
++两个版本使用官方 Vendor 协议。Vendor 接口为 0，EP1 OUT 和 EP1 IN，HS 包长各 512 B。纯显示版 303A:2987 仅含 Vendor。复合版 303A:2986 还包含 HID 和 UAC，IDD 绑定 `MI_00`。通过 ELF 中实际编译的描述符进行校验。设备实际连接速度通过 `USB Mount: high-speed` 与 Windows USB 枚举确认。
++
++## 上电色条
++
++将显示用 HS 线暂时拔开，给开发板和 LCD 转接板供电，复位一次。应看到从左到右红、绿、蓝、白、黑、黄、青、品红八条色带，横屏铺满。串口上应显示 `resolution=1024x600, framebuffer=RGB565_LE` 和 `LCD boot pattern submitted`。拍摄可辨别边缘与颜色的照片，配合上电日志记入 P1。本次串口两次记录色条提交，用户确认 LCD 实显示正常。该轮证据由用户目视确认与串口日志组成。见 [P3 实测](../evidence/P3/hardware-run.txt)。
+diff --git a/docs/DECISIONS.md b/docs/DECISIONS.md
+new file mode 100644
+index 0000000..e9a1f64
+--- /dev/null
++++ b/docs/DECISIONS.md
+@@ -0,0 +1,11 @@
++# 决策记录
++
++| 决策 | 依据 |
++|---|---|
++| 采用当前 WSL ext4 目录 | 任务书在该目录。原目录没有可用 Git 元数据。保留任务书，使用上游 Git checkout 和独立构建工作树 |
++| 锁定官方示例 master 的当时 HEAD 和 ESP-IDF v5.4.4 | 示例需要 `>=5.4.4,!=5.5.0,!=5.5.1,!=5.5.2`。现有 IDF commit 在 v5.4.2 之后，原 Python 3.10 虚拟环境通过重定向链接执行 3.11。新的 IDF、必要工具及 venv 放在项目中，原 SDK 和系统路径保留 |
++| 旧定义加 V1.6 amend | 43 项板卡列表中无本型号专用定义。核对 LCD 连接、电源、Flash 和 PSRAM 后单独约束。删除生成表里的闲置设备以排除 GPIO35 冲突 |
++| 先交付纯显示版，同时构建复合版 | 优先建立 LCD 和 USB 显示链路。纯显示只暴露 Vendor 0x2987，复合使用 0x2986，保留触摸和音频的后续测试入口 |
++| 复用 JPEG、传输及面板驱动 | 小补丁只约束依赖、使用已有 DPI framebuffer 加开机色条、记录复位及 PSRAM、USB 速度和每五秒帧结果 |
++| 暂停安装当前 IDD | Windows 只读验证结果显示安装器 Valid、目录 UnknownError；内部脚本会调用测试证书。待乐鑫提供现有 Windows 信任策略认可的发布包 |
++| 兼容已安装的 Windows IDD 产品字符串读取路径 | 在保留 Vendor 接口字符串的同时，USB 产品字符串也提供相同模式参数。帧长度通告按驱动 KiB 约定向下取整。实机从 320×240 回退模式恢复至 1024×600 |
+diff --git a/docs/HANDOFF.md b/docs/HANDOFF.md
+new file mode 100644
+index 0000000..57b489c
+--- /dev/null
++++ b/docs/HANDOFF.md
+@@ -0,0 +1,12 @@
++# 交接
++
++**CODE_READY**。V1.6 的纯显示和复合配置已用锁定的官方示例与 ESP-IDF v5.4.4 构建。纯显示版再次干净构建，产物清单的七个 SHA256 完全一致。
++
++- [烧录包](../out/esp32-p4x-v16-usb-display.zip) 含两种配置、三份烧录二进制、烧录参数、ELF、有效配置及散列。
++- [构建复现](../README.md) · [版本基线](BASELINE.md) · [阶段证据](../TASKS.md) · [板级审核](BOARD_V16_AUDIT.md)
++
++**已在实机烧录纯显示版**。Windows COM6（303A:1001，BUSID 1-4）已透传为 WSL `/dev/ttyACM0`。芯片实测 ESP32-P4 Rev 3.2、16 MB Flash。烧录前核对了 MAC 和安全状态，保存了完整的原 Flash 备份并校验 SHA256。写入的三个区段均通过验证。两次启动均通过 32 MB PSRAM 自检并提交 1024×600 RGB565_LE 色条，用户确认实显正常。[烧录与启动证据](../evidence/P3/com6-flash-startup.log) · [现场记录](../evidence/P3/hardware-run.txt)
++
++**Windows 1024×600 扩展桌面实测通过**。用户安装了 IDD 1.2.25.2。修正 USB 产品和 Vendor 接口字符串后，仅重写应用分区，Windows 从初始 320×240 回退模式切到 1024×600，设备挂载于 USB High-Speed。跨屏测试窗口运行约 30 秒，用户确认副屏显示且计时持续更新。[Windows 日志](../evidence/P4/windows-1024x600-smoke.log) · [实机测试](../evidence/P4/extended-desktop-test.txt)
++
++**完整 MVP 验收待完成**。按用户选择先交付当前可用固件，实体 USB 拔插 10 次、2 小时连续运行及整机断电冷启动另测。[验收表](ACCEPTANCE.md)
+diff --git a/docs/TROUBLESHOOTING.md b/docs/TROUBLESHOOTING.md
+new file mode 100644
+index 0000000..4d5771f
+--- /dev/null
++++ b/docs/TROUBLESHOOTING.md
+@@ -0,0 +1,18 @@
++# 故障排查
++
++| 现象 | 检查顺序 |
++|---|---|
++| `idf.py` 缺失或找不到 Python 依赖 | 用 `scripts/bootstrap.sh` 准备项目内的锁定 IDF。旧 venv 的 Python 链接可能指向不同小版本。运行 `scripts/audit_env.sh` 核对工具及子模块 |
++| CMake 报 ESP-IDF 组件子模块缺失 | 查看 `git -C upstream/esp-idf-v5.4.4 submodule status --recursive`。补齐未初始化或偏离 gitlink 的子模块后再干净构建 |
++| BMGR 找不到板或烧录错误修订版 | 检查是否使用 V1.6 amend、目标是否为 esp32p4、镜像是否为 Rev 3.x。BMGR 生成 target 后通过 `scripts/build.sh --clean` 刷新 |
++| 上电黑屏，串口报 panel init / DSI timeout | 断电检查反向 FFC、DSI 与 J3、GPIO27 复位线、GPIO26 PWM 线和 LCD 转接板 J1 电源。对照 [板级审核](BOARD_V16_AUDIT.md) |
++| 背光亮但无色条，或色条不正确 | 看生成的 EK79007/DPI 配置、LCD 是否有 `1024x600, framebuffer=RGB565_LE` 和提交日志。横向错位看时序、色序异常看 RGB/BGR 和色深。先留空 HS 口重复测试 |
++| 初始化日志出现 `swap_xy` 或 `disp_on_off` 不支持 | Board Manager 0.7.6 的通用初始化会调用这两个 EK79007 面板不提供的操作。若其后出现 LCD 初始化成功、色条提交和可见色条，则记录为已知非致命日志。Rev 3.2 也记录了 PMU 校准 eFuse 缺省，实测启动使用默认值并通过 PSRAM 自检 |
++| WSL 无串口或 esptool 无响应 | 只接 Serial/JTAG，按 [烧录手册](WSL_FLASHING.md) 核对唯一 BUSID、设备权限与占用；复位后检查是否仍 attach |
++| Windows 无 PnP 条目或仅 FS | 确认连接 HS USB 2.0 Type-C、HS Type-A 空闲、线缆支持数据、换可确认的 USB 2.0 HS 主机口。看串口 `USB Mount: high-speed` 和 Windows 枚举 |
++| 设备有枚举但第二屏不出现 | 核对 PID、复合版 Vendor 的 `MI_00`、驱动信任和设备管理器错误。见 [驱动手册](WINDOWS_DRIVER.md) |
++| Windows 副屏显示 320×240 或设备报告丢弃 320×240 帧 | 检查是否仍使用早期纯显示固件。当前版在 USB 产品和 Vendor 接口中提供相同的显示参数。核对启动日志中的 USB Mount、Windows 活动分辨率和有效驱动版本 |
++| 色条正常，Windows 扩展后冻结或花屏 | 看 Input JPEG headers、LCD submissions、JPEG 错误、draw 错误、队列丢帧、USB Suspend/Resume 及复位原因。记录前后一分钟日志；基线测试后再降低 FPS/JPEG |
++| 初次构建出现 board defaults 或 TinyUSB Kconfig 提示 | 旧板默认文件包含本工程未引入的相机、Hosted SDIO，首轮依赖解析时也可能没有音频选项。重复 HS choice 来自示例和同仓库 USB UAC 组件。以最终配置、镜像、ELF 描述符和退出码为准 |
++
++归档现场日志用 `scripts/collect_logs.sh P3 LOG...`，公开前人工检查用户名、设备标识、局域网地址和凭据。原始设备标识仅存私有记录。
+diff --git a/docs/WINDOWS_DRIVER.md b/docs/WINDOWS_DRIVER.md
+new file mode 100644
+index 0000000..496a004
+--- /dev/null
++++ b/docs/WINDOWS_DRIVER.md
+@@ -0,0 +1,45 @@
++# Windows 11 IDD 集成
++
++Windows 11 已绑定用户安装的 IDD 1.2.25.2（`oem2.inf`），设备状态正常。实测 USB 2.0 High-Speed（480 Mbps），第二屏为 1024×600 扩展桌面。用户确认移入副屏的测试窗口正常显示并刷新。[驱动状态](../evidence/P4/windows-driver-installed.log) · [扩展桌面实测](../evidence/P4/extended-desktop-test.txt)
++
++首次安装后，旧固件在 Windows 表现为 320×240。驱动公开源码从 USB 产品字符串读取显示模式，旧固件只在 Vendor 接口字符串提供参数。当前固件同时提供两处相同元数据，并按驱动约定以 KiB 通告帧长度上限（`Bl292`）；本次实机更新后 Windows 使用 1024×600。[驱动读取逻辑](https://github.com/chuanjinpang/win10_idd_xfz1986_usb_graphic_driver_display/blob/c2de0f56f778904d663d8e2dc5a71b4a6b270ecc/win10_idd_xfz1986_usb_graphic_driver/idd_xfz1986_usb_graphic/usb_transf.cpp) · [旧固件串口证据](../evidence/P4/idf-320x240-before-fix.log)
++
++## 驱动包审核
++
++| 项目 | 结果 |
++|---|---|
++| 官方链接文件 | `xfz1986_usb_graphic_250224_rc_sign.exe`，SHA256 `268a9f8b9e7f7ef4223ee33386e6396cc1d470026188104aad93d8b96af52501` |
++| 已提取 INF | `xfz1986_usb_graphic.inf`，`DriverVer=02/24/2025,1.2.25.2`，平台 `NTamd64` |
++| INF 硬件 ID | 复合 `USB\VID_303A&PID_2986&MI_00`，纯显示 `USB\VID_303A&PID_2987` |
++| 安装器 Authenticode | 本机 `Valid`，签名者 Airspace Intelligent Technology (Changzhou) Co., Ltd. |
++| 驱动目录 Authenticode | 本机 `UnknownError`，时间戳签名和/或证书无法验证或已损坏。目录含 Pikachu Time Sub CA，颁发者 Pikachu Test CA RSA |
++| 解包脚本 | 会调用 `PikachuTestCert.exe /SILENT`，随后运行 `dpinst.exe` |
++
++完整记录见 [P4 证据](../evidence/P4/)。来源见 [固定版本驱动说明](https://github.com/espressif/esp-iot-solution/blob/f721a40c032f6168844fe3bd321bc182e2593348/examples/usb/device/usb_extend_screen/windows_driver/README_cn.md) · [乐鑫发布的下载文件](https://dl.espressif.com/AE/esp-iot-solution/xfz1986_usb_graphic_250224_rc_sign.exe)。
++
++请使用乐鑫提供且能通过本机现有信任策略校验的替代包。对候选包核对官方来源、哈希、匹配的 INF 和目录签名；如有 Windows SDK，使用 `signtool verify /v /c driver.cat driver.inf` 复核 Windows 驱动验证策略及文件绑定。保留默认驱动签名策略与 Secure Boot。表中签名结果采集于用户安装之前。已独立确认当前 Windows 上的驱动加载与显示功能。[Microsoft SignTool 文档](https://learn.microsoft.com/en-us/windows/win32/seccrypto/signtool)
++
++## 合规驱动包的安装与验证
++
++1. 准备完整可信驱动包后，打开管理员 PowerShell，执行 `pnputil /add-driver .\xfz1986_usb_graphic.inf /install`。设备应绑定该 INF。在安装前后查看设备管理器的 **显示适配器** 和 **监视器**，有错误时记录设备状态和错误代码。
++2. 将 V1.6 的 **HS USB 2.0 Type-C** 用数据线接 Windows。该口留在 Windows。HS Type-A 保持空闲。Serial/JTAG 可继续留给 WSL 监视串口。
++3. 普通 PowerShell 枚举匹配的硬件 ID，分享输出时隐藏设备实例串号。
++
++   ```powershell
++   Get-PnpDevice -PresentOnly |
++     Where-Object InstanceId -Match '^USB\\VID_303A&PID_298[67]' |
++     ForEach-Object {
++       $_ | Format-Table Status,Class,FriendlyName
++       (Get-PnpDeviceProperty -InstanceId $_.InstanceId -KeyName DEVPKEY_Device_HardwareIds).Data
++       (Get-PnpDeviceProperty -InstanceId $_.InstanceId -KeyName DEVPKEY_Device_DriverInfPath).Data
++     }
++   ```
++
++4. 打开 **设置 → 系统 → 显示**，确认出现第二屏并选 **扩展这些显示器**。选副屏设置横向 1024×600。拖动记事本到副屏，滚动并保存显示设置截图和 LCD 照片。依据 [验收表](ACCEPTANCE.md) 记录拔插和连续运行。
++5. 若要撤销驱动，用 `pnputil /enum-drivers` 核实对应原始 INF、发布名称和版本，再拔 HS 线，管理员执行 `pnputil /delete-driver oemNN.inf /uninstall`。只替换为核实后的 oem 编号。[Microsoft PnPUtil 命令](https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/pnputil-command-syntax)
++
++设备管理器无条目时先查设备端 `USB Mount`、HS 线、供电与接口。硬件 ID 正确而驱动报错时，检查驱动目录信任、架构适配及 `%SystemRoot%\inf\setupapi.dev.log` 中设备对应的安装事件。
++
++可以用 PowerShell 运行 [Windows USB 链路检查脚本](../scripts/verify_windows_usb.ps1)。脚本仅针对纯显示版的设备 ID，通过其上一级集线器读取已协商速率和当前配置值。[Microsoft USB 集线器接口](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/usbioctl/ni-usbioctl-ioctl_usb_get_node_connection_information_ex)
++
++当前实测使用 [30 秒窗口测试脚本](../scripts/smoke_windows_display.ps1)，会将专用测试窗口从主屏移到唯一的 1024×600 副屏，再自动关闭。
+diff --git a/docs/WSL_FLASHING.md b/docs/WSL_FLASHING.md
+new file mode 100644
+index 0000000..dd0f3c8
+--- /dev/null
++++ b/docs/WSL_FLASHING.md
+@@ -0,0 +1,42 @@
++# V1.6 安全烧录与回滚
++
++1. 查看板背 V1.6 丝印。断电接好 DSI 排线、RST_LCD、PWM 和 LCD 转接板供电。首次接一根数据线到开发板标为 **USB Serial/JTAG** 的 Type-C。显示 HS 口在 Windows 使用，初始化色条前可先留空。接线与端口见 [官方 V1.6 手册](https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4x-function-ev-board/user_guide.html)。
++2. 在 Windows PowerShell 中执行 `usbipd list`。用单次拔插确认 V1.6 对应的 BUSID 和产品名，通常为 `303a:1001`。管理员 PowerShell 需要对**这一个 BUSID**执行 `usbipd bind --busid <BUSID>`。在 WSL 打开时执行 `usbipd attach --wsl --busid <BUSID>`。设备可能需要重新 attach。安装和透传步骤见 [Microsoft WSL USB 指南](https://learn.microsoft.com/en-us/windows/wsl/connect-usb)。
++3. WSL 中用 `ls -l /dev/serial/by-id/ /dev/ttyACM*` 确认新出现的对应设备，优先采用稳定的 by-id 路径。若无访问权限，在自己的 WSL 会话检查组权限和 udev。关闭占用同一个设备的串口监视器。
++4. 在工程根目录执行下列命令。若读取失败，按住 BOOT，按一下 Reset，再释放 BOOT。保留 ACTUAL_MAC 在本地。检查识别文本中 chip 为 ESP32-P4、revision ≥3.1 且 <4.0、Flash 为 16 MB。
++
++   ```bash
++   scripts/flash.sh identify /dev/ttyACM0
++   scripts/flash.sh flash /dev/ttyACM0 ACTUAL_MAC
++   ```
++
++   根据刚才检测结果替换端口和 `ACTUAL_MAC`。第二条命令先校验固件哈希、重读芯片身份和检查端口映射，再运行 `idf.py -p PORT flash monitor`。用 Ctrl+] 退出串口监视器。
++
++5. 首次复位后核对板型、修订版、PSRAM、复位原因和 LCD 色条。拔掉板卡及 LCD 的供电后重新连接，记录第二次完整启动。HS 线接入 Windows 后查看 USB mount。导出记录用 `scripts/collect_logs.sh P3 evidence/P3/private/flash-monitor.XXXXX`，分享前复核脱敏结果。
++
++## 可选原固件备份与回滚
++
++读备份需要先完成第 4 步身份核对。确认未启用 Flash Encryption 或 Secure Boot 后，可在 WSL 从**同一确认串口**读取整片镜像到项目私有目录。
++
++```bash
++source scripts/env.sh
++activate_idf
++umask 077
++mkdir -p evidence/P3/private
++backup="evidence/P3/private/factory-$(date +%Y%m%d-%H%M%S).bin"
++python -m esptool --chip esp32p4 --port /dev/ttyACM0 read_flash 0x0 0x1000000 "$backup"
++sha256sum "$backup" > "$backup.sha256"
++```
++
++本次已从 COM6 对应的 Rev 3.2 样机读取 16 MB 并通过 SHA256 校验，备份留在 `evidence/P3/private/`。整片备份可能含 NVS 数据。保留在私有目录。回滚首选该 V1.6 的已知原厂固件及官方烧录地址，或者同一块设备的已验证备份。恢复整片备份会覆盖应用及数据，执行前需确认目标 MAC、备份散列、Flash 安全状态及授权。已有项目固件回退可重建相应固定版本并使用设备确认脚本。工程的正常烧录使用构建生成的地址，禁止额外整片擦除。
++
++## Windows 原生备选
++
++需要 ESP-IDF 终端或同一版本 esptool 4.14.0。把所选 `out/<配置>` 里的 `flash_args`、三个 BIN 及其相对目录复制到 Windows。通过设备管理器区分 Serial/JTAG 的 COM 号，若已透传先使用 `usbipd detach --busid <BUSID>`。在 Windows PowerShell 进入该产物目录，替换 COM 号并在读到相同芯片、修订版、Flash 和 MAC 后执行第二条。
++
++```powershell
++python -m esptool --chip esp32p4 --port COM7 flash_id
++python -m esptool --chip esp32p4 --port COM7 -b 460800 --before default_reset --after hard_reset write_flash '@flash_args'
++```
++
++随后用 115200 串口监视器复位看日志。设备在 Windows 和 WSL 之间只能由一边占用 Serial/JTAG。

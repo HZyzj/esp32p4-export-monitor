@@ -1,0 +1,154 @@
+Ignoring importlib_metadata: markers 'python_version < "3.8"' don't match your environment
+Requirement already satisfied: esp-bmgr-assist==0.8.4 in ./upstream/.idf-venv/lib/python3.11/site-packages (0.8.4)
+Requirement already satisfied: setuptools in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 7)) (79.0.1)
+Requirement already satisfied: packaging in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 8)) (26.3)
+Requirement already satisfied: click in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 11)) (8.1.8)
+Requirement already satisfied: pyserial in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 12)) (3.5)
+Requirement already satisfied: cryptography in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 13)) (44.0.3)
+Collecting pyparsing (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 14))
+  Downloading pyparsing-3.2.5-py3-none-any.whl.metadata (5.0 kB)
+Requirement already satisfied: pyelftools in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 15)) (0.33)
+Requirement already satisfied: idf-component-manager in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (2.5.2)
+Requirement already satisfied: esp-coredump in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 17)) (1.18.1)
+Requirement already satisfied: esptool in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 18)) (4.14.0)
+Requirement already satisfied: esp-idf-kconfig in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 19)) (2.5.4)
+Requirement already satisfied: esp-idf-monitor in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 20)) (1.11.0)
+Requirement already satisfied: esp-idf-nvs-partition-gen in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 21)) (0.1.9)
+Requirement already satisfied: esp-idf-size in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 22)) (1.8.0)
+Requirement already satisfied: esp-idf-panic-decoder in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 23)) (1.5.0)
+Requirement already satisfied: pyclang in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 24)) (0.7.0)
+Requirement already satisfied: construct in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 25)) (2.10.70)
+Requirement already satisfied: rich in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 26)) (15.0.0)
+Requirement already satisfied: psutil in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 27)) (7.2.2)
+Collecting tree_sitter (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 30))
+  Downloading tree_sitter-0.26.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.9 kB)
+Collecting tree_sitter_c (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 31))
+  Downloading tree_sitter_c-0.24.2-cp310-abi3-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (1.8 kB)
+Requirement already satisfied: freertos_gdb in ./upstream/.idf-venv/lib/python3.11/site-packages (from -r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 34)) (1.0.4)
+Collecting filelock>=3.12 (from esp-bmgr-assist==0.8.4)
+  Downloading filelock-4.2.9-py3-none-any.whl.metadata (2.3 kB)
+Collecting pyyaml>=5.1 (from esp-bmgr-assist==0.8.4)
+  Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Requirement already satisfied: cffi>=1.12 in ./upstream/.idf-venv/lib/python3.11/site-packages (from cryptography->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 13)) (2.1.1)
+Requirement already satisfied: colorama in ./upstream/.idf-venv/lib/python3.11/site-packages (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (0.4.6)
+Requirement already satisfied: ruamel.yaml in ./upstream/.idf-venv/lib/python3.11/site-packages (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (0.19.1)
+Requirement already satisfied: requests in ./upstream/.idf-venv/lib/python3.11/site-packages (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (2.34.2)
+Requirement already satisfied: requests-file in ./upstream/.idf-venv/lib/python3.11/site-packages (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (3.0.1)
+Requirement already satisfied: requests-toolbelt in ./upstream/.idf-venv/lib/python3.11/site-packages (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (1.0.0)
+Requirement already satisfied: tqdm in ./upstream/.idf-venv/lib/python3.11/site-packages (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (4.70.1)
+Requirement already satisfied: jsonref in ./upstream/.idf-venv/lib/python3.11/site-packages (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (1.1.0)
+Collecting pydantic!=2.12.0 (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16))
+  Downloading pydantic-2.14.3-py3-none-any.whl.metadata (141 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 141.5/141.5 kB 423.3 kB/s eta 0:00:00
+Collecting pydantic-core (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16))
+  Downloading pydantic_core-2.50.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (6.6 kB)
+Collecting pydantic-settings (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16))
+  Downloading pydantic_settings-2.16.2-py3-none-any.whl.metadata (4.0 kB)
+Requirement already satisfied: pathvalidate in ./upstream/.idf-venv/lib/python3.11/site-packages (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (3.3.1)
+Requirement already satisfied: typing-extensions in ./upstream/.idf-venv/lib/python3.11/site-packages (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (4.16.0)
+Requirement already satisfied: truststore in ./upstream/.idf-venv/lib/python3.11/site-packages (from idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (0.10.5)
+Requirement already satisfied: pygdbmi>=0.9.0.2 in ./upstream/.idf-venv/lib/python3.11/site-packages (from esp-coredump->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 17)) (0.11.0.0)
+Requirement already satisfied: esp-pylib>=1.1.4 in ./upstream/.idf-venv/lib/python3.11/site-packages (from esp-pylib[cli,ide]>=1.1.4->esp-coredump->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 17)) (1.2.1)
+Requirement already satisfied: rich-click in ./upstream/.idf-venv/lib/python3.11/site-packages (from esp-coredump->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 17)) (1.9.9)
+Requirement already satisfied: bitstring!=4.2.0,<5,>=3.1.6 in ./upstream/.idf-venv/lib/python3.11/site-packages (from esptool->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 18)) (4.4.0)
+Requirement already satisfied: ecdsa>=0.16.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from esptool->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 18)) (0.19.2)
+Requirement already satisfied: reedsolo<1.8,>=1.5.3 in ./upstream/.idf-venv/lib/python3.11/site-packages (from esptool->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 18)) (1.7.0)
+Requirement already satisfied: intelhex in ./upstream/.idf-venv/lib/python3.11/site-packages (from esptool->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 18)) (2.3.0)
+Collecting argcomplete>=3 (from esptool->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 18))
+  Downloading argcomplete-3.7.2-py3-none-any.whl.metadata (16 kB)
+Collecting markdown-it-py>=2.2.0 (from rich->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 26))
+  Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from rich->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 26)) (2.21.0)
+Collecting bitarray<4.0,>=3.0.0 (from bitstring!=4.2.0,<5,>=3.1.6->esptool->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 18))
+  Downloading bitarray-3.12.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.1/40.1 kB 2.9 MB/s eta 0:00:00
+Requirement already satisfied: tibs<0.6,>=0.5.6 in ./upstream/.idf-venv/lib/python3.11/site-packages (from bitstring!=4.2.0,<5,>=3.1.6->esptool->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 18)) (0.5.7)
+Requirement already satisfied: pycparser in ./upstream/.idf-venv/lib/python3.11/site-packages (from cffi>=1.12->cryptography->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 13)) (3.12)
+Requirement already satisfied: six>=1.9.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from ecdsa>=0.16.0->esptool->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 18)) (1.17.0)
+Requirement already satisfied: websockets>=12.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from esp-pylib[cli,ide]>=1.1.4->esp-coredump->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 17)) (17.4)
+Requirement already satisfied: mdurl~=0.1 in ./upstream/.idf-venv/lib/python3.11/site-packages (from markdown-it-py>=2.2.0->rich->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 26)) (0.1.2)
+Requirement already satisfied: annotated-types>=0.6.0 in ./upstream/.idf-venv/lib/python3.11/site-packages (from pydantic!=2.12.0->idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (0.8.0)
+Requirement already satisfied: typing-inspection>=0.4.4 in ./upstream/.idf-venv/lib/python3.11/site-packages (from pydantic!=2.12.0->idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (0.4.5)
+Requirement already satisfied: python-dotenv>=1.2.2 in ./upstream/.idf-venv/lib/python3.11/site-packages (from pydantic-settings->idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (1.2.4)
+Collecting charset_normalizer<4,>=2 (from requests->idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16))
+  Downloading charset_normalizer-3.5.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.4/46.4 kB 1.9 MB/s eta 0:00:00
+Requirement already satisfied: idna<4,>=2.5 in ./upstream/.idf-venv/lib/python3.11/site-packages (from requests->idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (3.20)
+Requirement already satisfied: urllib3<3,>=1.26 in ./upstream/.idf-venv/lib/python3.11/site-packages (from requests->idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16)) (1.26.20)
+Collecting certifi>=2023.5.7 (from requests->idf-component-manager->-r /home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/tools/requirements/requirements.core.txt (line 16))
+  Downloading certifi-2026.10.23-py3-none-any.whl.metadata (2.5 kB)
+Downloading pyparsing-3.2.5-py3-none-any.whl (113 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 113.9/113.9 kB 1.4 MB/s eta 0:00:00
+Downloading tree_sitter-0.26.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (674 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 674.1/674.1 kB 1.5 MB/s eta 0:00:00
+Downloading tree_sitter_c-0.24.2-cp310-abi3-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (94 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 94.3/94.3 kB 7.1 MB/s eta 0:00:00
+Downloading argcomplete-3.7.2-py3-none-any.whl (43 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 43.3/43.3 kB 9.2 MB/s eta 0:00:00
+Downloading filelock-4.2.9-py3-none-any.whl (164 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 164.7/164.7 kB 6.9 MB/s eta 0:00:00
+Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 91.7/91.7 kB 8.5 MB/s eta 0:00:00
+Downloading pydantic-2.14.3-py3-none-any.whl (494 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 494.1/494.1 kB 6.4 MB/s eta 0:00:00
+Downloading pydantic_core-2.50.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (2.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.3/2.3 MB 6.5 MB/s eta 0:00:00
+Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 806.6/806.6 kB 12.0 MB/s eta 0:00:00
+Downloading pydantic_settings-2.16.2-py3-none-any.whl (81 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 82.0/82.0 kB 13.6 MB/s eta 0:00:00
+Downloading bitarray-3.12.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (400 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 400.9/400.9 kB 12.4 MB/s eta 0:00:00
+Downloading certifi-2026.10.23-py3-none-any.whl (135 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 135.1/135.1 kB 12.9 MB/s eta 0:00:00
+Downloading charset_normalizer-3.5.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (269 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 270.0/270.0 kB 14.3 MB/s eta 0:00:00
+Installing collected packages: tree_sitter_c, tree_sitter, pyyaml, pyparsing, pydantic-core, markdown-it-py, filelock, charset_normalizer, certifi, bitarray, argcomplete, pydantic, pydantic-settings
+  Attempting uninstall: pyyaml
+    Found existing installation: PyYAML 6.0.4
+    Uninstalling PyYAML-6.0.4:
+      Successfully uninstalled PyYAML-6.0.4
+  Attempting uninstall: pyparsing
+    Found existing installation: pyparsing 3.3.3
+    Uninstalling pyparsing-3.3.3:
+      Successfully uninstalled pyparsing-3.3.3
+  Attempting uninstall: pydantic-core
+    Found existing installation: pydantic_core 2.50.5
+    Uninstalling pydantic_core-2.50.5:
+      Successfully uninstalled pydantic_core-2.50.5
+  Attempting uninstall: markdown-it-py
+    Found existing installation: markdown-it-py 4.3.0
+    Uninstalling markdown-it-py-4.3.0:
+      Successfully uninstalled markdown-it-py-4.3.0
+  Attempting uninstall: filelock
+    Found existing installation: filelock 4.3.0
+    Uninstalling filelock-4.3.0:
+      Successfully uninstalled filelock-4.3.0
+  Attempting uninstall: charset_normalizer
+    Found existing installation: charset-normalizer 3.5.3
+    Uninstalling charset-normalizer-3.5.3:
+      Successfully uninstalled charset-normalizer-3.5.3
+  Attempting uninstall: certifi
+    Found existing installation: certifi 2026.11.20
+    Uninstalling certifi-2026.11.20:
+      Successfully uninstalled certifi-2026.11.20
+  Attempting uninstall: bitarray
+    Found existing installation: bitarray 3.12.4
+    Uninstalling bitarray-3.12.4:
+      Successfully uninstalled bitarray-3.12.4
+  Attempting uninstall: argcomplete
+    Found existing installation: argcomplete 3.8.0
+    Uninstalling argcomplete-3.8.0:
+      Successfully uninstalled argcomplete-3.8.0
+  Attempting uninstall: pydantic
+    Found existing installation: pydantic 2.14.4
+    Uninstalling pydantic-2.14.4:
+      Successfully uninstalled pydantic-2.14.4
+  Attempting uninstall: pydantic-settings
+    Found existing installation: pydantic-settings 2.16.3
+    Uninstalling pydantic-settings-2.16.3:
+      Successfully uninstalled pydantic-settings-2.16.3
+Successfully installed argcomplete-3.7.2 bitarray-3.12.3 certifi-2026.10.23 charset_normalizer-3.5.2 filelock-4.2.9 markdown-it-py-4.2.0 pydantic-2.14.3 pydantic-core-2.50.4 pydantic-settings-2.16.2 pyparsing-3.2.5 pyyaml-6.0.3 tree_sitter-0.26.1 tree_sitter_c-0.24.2
+
+[notice] A new release of pip is available: 24.0 -> 26.3
+[notice] To update, run: python -m pip install --upgrade pip

@@ -1,0 +1,50 @@
+components/heap/tlsf: exit=0
+From /home/yzj/esp/v5.4/esp-idf/components/heap/tlsf
+ * branch            2867f6883a12920b1969ff9624c0ab0e4185c2ce -> FETCH_HEAD
+HEAD is now at 2867f68 Merge branch 'fix/pointer-compatibility-64bit-target' into 'idf'
+
+components/json/cJSON: exit=0
+From /home/yzj/esp/v5.4/esp-idf/components/json/cJSON
+ * branch            c859b25da02955fef659d658b8f324b5cde87be3 -> FETCH_HEAD
+HEAD is now at c859b25 Release 1.7.19 (#958)
+
+components/lwip/lwip: exit=0
+From /home/yzj/esp/v5.4/esp-idf/components/lwip/lwip
+ * branch            fd432e4ee2cfb7f7f1c7eb7227e0173412e7b84e -> FETCH_HEAD
+HEAD is now at fd432e4 nd6: add a unit test case for nd6 rio support
+
+components/mbedtls/mbedtls: exit=0
+From https://github.com/espressif/mbedtls
+ * branch            ffb280bb63c78bfec1e1ab55040671768c85c923 -> FETCH_HEAD
+HEAD is now at ffb280b feat(mbedtls): skip memset ssl buffers with dynamic buffer enabled.
+
+components/mqtt/esp-mqtt: exit=0
+From /home/yzj/esp/v5.4/esp-idf/components/mqtt/esp-mqtt
+ * branch            cac1552e62b0474c162547b7cce345d7cd1aecfe -> FETCH_HEAD
+HEAD is now at cac1552 Merge branch 'fix/analyzer-unknown-pragma-warning' into 'master'
+
+components/openthread/lib: exit=0
+From https://github.com/espressif/esp-thread-lib
+ * branch            eb8f0378a2c9fdd77c214813997ab3aa495f6909 -> FETCH_HEAD
+HEAD is now at eb8f037 feat(lib): update thread-lib for upstream a12ff0d0f
+
+components/openthread/openthread: exit=0
+From https://github.com/espressif/openthread
+ * branch            a12ff0d0f54fd41954b45047fcdd08f302731c5f -> FETCH_HEAD
+HEAD is now at a12ff0d [csl] account for accuracy drift for next CSL window (#11602)
+
+components/protobuf-c/protobuf-c: exit=0
+From /home/yzj/esp/v5.4/esp-idf/components/protobuf-c/protobuf-c
+ * branch            abc67a11c6db271bedbb9f58be85d6f4e2ea8389 -> FETCH_HEAD
+HEAD is now at abc67a1 ChangeLog: 1.4.1
+
+components/spiffs/spiffs: exit=0
+From https://github.com/pellepl/spiffs
+ * branch            ad902cadceb39d0825a97e25ecb5867641f606ba -> FETCH_HEAD
+HEAD is now at ad902ca Merge pull request #303 from Eun0us/fix/readdir-stack-buffer-overflow
+
+components/unity/unity: exit=0
+From /home/yzj/esp/v5.4/esp-idf/components/unity/unity
+ * branch            bf560290f6020737eafaa8b5cbd2177c3956c03f -> FETCH_HEAD
+HEAD is now at bf56029 Merge pull request #656 from ThrowTheSwitch/platform_matrix
+

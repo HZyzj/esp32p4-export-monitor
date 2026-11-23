@@ -1,0 +1,19 @@
+bash -n scripts/audit_env.sh exit=0
+bash -n scripts/bootstrap.sh exit=0
+bash -n scripts/build.sh exit=0
+bash -n scripts/collect_logs.sh exit=0
+bash -n scripts/env.sh exit=0
+bash -n scripts/flash.sh exit=0
+bash -n scripts/inspect_build.sh exit=0
+Usage: scripts/build.sh [--clean] [--profile display-only|composite]
+Usage: scripts/flash.sh identify PORT
+       scripts/flash.sh flash PORT EXPECTED_MAC [display-only|composite]
+找不到串口 /dev/ttyACM9999，请连接并透传 V1.6 Serial/JTAG。
+Nonexistent serial guard exit=1
+脱敏日志位于 /home/yzj/project/esp32p4-mon/evidence/P6/collected-0g1vt1。公开前请核对内容。
+MAC: <MAC>
+USB\VID_303A&PID_2987\<instance>
+USB Mount: high-speed
+Redaction smoke check exit=0
+Firmware patch git diff --check exit=0
+ESP32_P4_USB_Extended_Display_AGENT_TASK.md: OK

@@ -1,0 +1,8 @@
+PnpLockdown=1
+Provider=%ManufacturerName%
+CatalogFile=xfz1986_usb_graphic.cat
+DriverVer = 02/24/2025,1.2.25.2
+%ManufacturerName%=Standard,NTamd64
+[Standard.NTamd64]
+%DeviceName%=MyDevice_Install, USB\VID_303A&PID_2986&MI_00 ;
+%DeviceName%=MyDevice_Install, USB\VID_303A&PID_2987 ;

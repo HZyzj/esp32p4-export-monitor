@@ -1,0 +1,12 @@
+subject=C = US, O = "VeriSign, Inc.", OU = VeriSign Trust Network, OU = "(c) 2006 VeriSign, Inc. - For authorized use only", CN = VeriSign Class 3 Public Primary Certification Authority - G5
+issuer=C = US, O = "VeriSign, Inc.", OU = Class 3 Public Primary Certification Authority
+
+subject=C = CN, ST = Sichuan, L = Chengdu, O = "Chengdu Qiqiao Software Co., Ltd", OU = Digital ID Class 3 - Microsoft Software Validation v2, CN = "Chengdu Qiqiao Software Co., Ltd"
+issuer=C = US, O = "VeriSign, Inc.", OU = VeriSign Trust Network, OU = Terms of use at https://www.verisign.com/rpa (c)10, CN = VeriSign Class 3 Code Signing 2010 CA
+
+subject=C = US, O = "VeriSign, Inc.", OU = VeriSign Trust Network, OU = Terms of use at https://www.verisign.com/rpa (c)10, CN = VeriSign Class 3 Code Signing 2010 CA
+issuer=C = US, O = "VeriSign, Inc.", OU = VeriSign Trust Network, OU = "(c) 2006 VeriSign, Inc. - For authorized use only", CN = VeriSign Class 3 Public Primary Certification Authority - G5
+
+subject=C = CN, O = Pikachu Trust Network CA, OU = Pikachu Certification Authority, CN = Pikachu Time Sub CA, emailAddress = timeca@certs.us.kg, description = Pikachu Time Signning Sub CA, description = \E7\9A\AE\E5\8D\A1\E4\B8\98\E6\97\B6\E9\97\B4\E6\88\B3\E7\AD\BE\E7\BD\B2\E4\B8\AD\E9\97\B4CA\E5\AD\90\E8\AF\81\E4\B9\A6
+issuer=C = CN, O = Pikachu Trust Network CA, OU = Pikachu Certification Authority, CN = Pikachu Test CA RSA, emailAddress = testca@certs.us.kg, description = Pikachu Public Test Root RSA, description = \E7\9A\AE\E5\8D\A1\E4\B8\98\E5\85\AC\E5\85\B1\E6\9C\8D\E5\8A\A1\E6\B5\8B\E8\AF\95\E6\A0\B9\E8\AF\81\E4\B9\A6 RSA
+

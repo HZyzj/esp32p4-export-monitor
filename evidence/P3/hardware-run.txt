@@ -1,0 +1,15 @@
+P3 hardware verification, 2026-11-23.
+Windows target confirmed by user and usbipd list: BUSID 1-4, 303A:1001, COM6.
+usbipd bind --busid 1-4: exit 0. usbipd attach --wsl --busid 1-4: exit 0.
+WSL cdc_acm mapped this device to ttyACM0. Current WSL user was granted ownership of this single temporary node.
+scripts/flash.sh identify /dev/ttyACM0: exit 0. ESP32-P4 revision v3.2, 16 MB flash. MAC recorded privately and matched again immediately before flash.
+esptool get_security_info: exit 0. Secure Boot and Flash Encryption disabled.
+esptool read_flash 0x0 0x1000000: exit 0. Verified 16,777,216-byte backup and its SHA256 in the private directory.
+scripts/flash.sh flash /dev/ttyACM0 <confirmed MAC> display-only: exit 0.
+ESP-IDF verified all three written regions; completed startup twice (first startup and intentional USB serial monitor reset, reason 11 / ESP_RST_USB).
+Both startups reported a passing 32 MB PSRAM test, 1024×600 RGB565_LE LCD, boot pattern submission, and successful app_main completion.
+Physical LCD boot pattern: PASS, visually confirmed by user in the session. No screenshot or camera measurement was collected.
+Full power cycle and Windows HS enumeration pending. User reported the HS cable was not connected. The active 12 Mbps device was Serial/JTAG.
+Evidence: com6-confirmation.log, usbipd-bind.log, usbipd-attach.log, serial-access.log, com6-identify.log, com6-backup-check.log, com6-flash-startup.log.
+
+Follow-up after the HS cable was connected: Windows PnP observed the ESP_Extern_Screen USB node at 303A:2987. The parent hub reported negotiated USB 2.0 High-Speed (480 Mbps). The host returned Code 28 and CurrentConfigurationValue=0. The serial monitor ran after an intentional USB reset and captured no TinyUSB mount event. See ../P4/windows-2987-enumeration.log and ../P4/windows-2987-speed.log.

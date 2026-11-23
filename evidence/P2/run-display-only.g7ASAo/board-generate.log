@@ -1,0 +1,44 @@
+..Executing action: bmgr
+ℹ️  Using user-specified project directory: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen
+📋 Version Information:
+   • Component Version: 0.7.6
+   • Git Commit: f721a40c (2026-11-19)
+   • Generation Time: 2026-11-23 13:45:00
+
+ℹ️  Using script directory as root directory: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen/managed_components/espressif__esp_board_manager
+ℹ️  Using project directory: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen
+   Scanning managed components boards: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen/managed_components
+   Scanning component boards: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen/components
+ℹ️  Resolved board: esp32_p4_function_ev_board
+=== Board Manager Configuration Generator ===
+⚙️  Step 1/8: Scanning board directories...
+✅ Found 43 board(s).
+⚙️  Step 2/8: Reading board selection...
+✅ Using board from command line: esp32_p4_function_ev_board
+✅ Board path: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen/managed_components/espressif__esp_boards/esp32_p4_function_ev_board
+ℹ️  Amend sources for board 'esp32_p4_function_ev_board' (low -> high priority):
+   1. [explicit] /home/yzj/project/esp32p4-mon/firmware/board/board_amend.yaml (2 fragments)  <- highest
+✅ gen_bmgr_codes directory cleared successfully (11 files, 0 directories)
+⚙️  Step 3/8: Finding board configuration files...
+⚙️  Step 4/8: Processing peripherals...
+⏭️  Skipping peripheral 'gpio_boot_button' (gen_skip=True)
+✅ Successfully validated 7 peripherals
+⚙️  Step 5/8: Processing devices and dependencies...
+⏭️  Skipping device 'ethernet' due to gen_skip=True
+⏭️  Skipping device 'fs_sdcard' due to gen_skip=True
+⏭️  Skipping device 'boot_button' due to gen_skip=True
+⏭️  Skipping device 'camera' due to gen_skip=True
+✅ Successfully validated 5 devices
+⚙️  Step 6/8: Generating Kconfig menu system...
+⚙️  Step 7/8: Updating SDK configuration...
+   Found sdkconfig.defaults.board at /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen/managed_components/espressif__esp_boards/esp32_p4_function_ev_board/sdkconfig.defaults.board
+⚙️  Step 8/8: Writing board information and setting up components...
+   Added board source directory: ../../managed_components/espressif__esp_boards/esp32_p4_function_ev_board
+   Created CMakeLists.txt: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/CMakeLists.txt
+   Created idf_component.yml: /home/yzj/project/esp32p4-mon/upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/idf_component.yml
+✅ Generated files directly to components/gen_bmgr_codes completed successfully!
+✅ === Board configuration generation completed successfully for board: esp32_p4_function_ev_board ===
+✅ ESP Board Manager configuration generation completed successfully!
+[Board Manager] board_manager.defaults has higher priority than the project sdkconfig.defaults.
+[Board Manager] If a configuration does not take effect, inspect: components/gen_bmgr_codes/board_manager.defaults
+Done

@@ -1,0 +1,19 @@
+Cloning into 'upstream/esp-idf-v5.4.4'...
+Note: switching to '296b6eab9445fd720e71aecab961e2d3fbca9944'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+Updating files:  60% (9989/16644)Updating files:  61% (10153/16644)Updating files:  62% (10320/16644)Updating files:  63% (10486/16644)Updating files:  64% (10653/16644)Updating files:  65% (10819/16644)Updating files:  66% (10986/16644)Updating files:  67% (11152/16644)Updating files:  68% (11318/16644)Updating files:  69% (11485/16644)Updating files:  70% (11651/16644)Updating files:  71% (11818/16644)Updating files:  72% (11984/16644)Updating files:  73% (12151/16644)Updating files:  74% (12317/16644)Updating files:  75% (12483/16644)Updating files:  76% (12650/16644)Updating files:  77% (12816/16644)Updating files:  78% (12983/16644)Updating files:  79% (13149/16644)Updating files:  80% (13316/16644)Updating files:  81% (13482/16644)Updating files:  82% (13649/16644)Updating files:  83% (13815/16644)Updating files:  84% (13981/16644)Updating files:  85% (14148/16644)Updating files:  86% (14314/16644)Updating files:  87% (14481/16644)Updating files:  88% (14647/16644)Updating files:  89% (14814/16644)Updating files:  90% (14980/16644)Updating files:  91% (15147/16644)Updating files:  92% (15313/16644)Updating files:  93% (15479/16644)Updating files:  94% (15646/16644)Updating files:  95% (15812/16644)Updating files:  96% (15979/16644)Updating files:  97% (16145/16644)Updating files:  98% (16312/16644)Updating files:  99% (16478/16644)Updating files: 100% (16644/16644)Updating files: 100% (16644/16644), done.

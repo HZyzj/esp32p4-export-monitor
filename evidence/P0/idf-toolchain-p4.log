@@ -1,0 +1,16 @@
+Updating /home/yzj/project/esp32p4-mon/upstream/.idf-tools/idf-env.json
+Selected targets are: esp32p4
+Current system platform: linux-amd64
+Installing tools: riscv32-esp-elf-gdb, riscv32-esp-elf, openocd-esp32, esp-rom-elfs
+Installing riscv32-esp-elf-gdb@16.3_20250913
+Downloading https://github.com/espressif/binutils-gdb/releases/download/esp-gdb-v16.3_20250913/riscv32-esp-elf-gdb-16.3_20250913-x86_64-linux-gnu.tar.gz
+Destination: /home/yzj/project/esp32p4-mon/upstream/.idf-tools/dist/riscv32-esp-elf-gdb-16.3_20250913-x86_64-linux-gnu.tar.gz.tmp
+Done
+Extracting /home/yzj/project/esp32p4-mon/upstream/.idf-tools/dist/riscv32-esp-elf-gdb-16.3_20250913-x86_64-linux-gnu.tar.gz to /home/yzj/project/esp32p4-mon/upstream/.idf-tools/tools/riscv32-esp-elf-gdb/16.3_20250913
+Skipping riscv32-esp-elf@esp-14.2.0_20260121 (already installed)
+Installing openocd-esp32@v0.12.0-esp32-20260304
+Downloading https://github.com/espressif/openocd-esp32/releases/download/v0.12.0-esp32-20260304/openocd-esp32-linux-amd64-0.12.0-esp32-20260304.tar.gz
+Destination: /home/yzj/project/esp32p4-mon/upstream/.idf-tools/dist/openocd-esp32-linux-amd64-0.12.0-esp32-20260304.tar.gz.tmp
+Done
+Extracting /home/yzj/project/esp32p4-mon/upstream/.idf-tools/dist/openocd-esp32-linux-amd64-0.12.0-esp32-20260304.tar.gz to /home/yzj/project/esp32p4-mon/upstream/.idf-tools/tools/openocd-esp32/v0.12.0-esp32-20260304
+Skipping esp-rom-elfs@20241011 (already installed)

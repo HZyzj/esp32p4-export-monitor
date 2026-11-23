@@ -1,0 +1,4 @@
+Working directory filesystem:
+TARGET                        SOURCE                                  FSTYPE OPTIONS
+/home/yzj/project/esp32p4-mon /dev/sdd[/home/yzj/project/esp32p4-mon] ext4   rw,nosuid,nodev,relatime,discard,errors=remount-ro,data=ordered
+lsusb -t exit=0

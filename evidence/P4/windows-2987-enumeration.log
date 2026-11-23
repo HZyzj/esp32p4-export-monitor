@@ -1,0 +1,9 @@
+Present matches: 1
+Name: ESP_Extern_Screen
+Class: ; Status: Error
+HardwareIds: USB\VID_303A&PID_2987&REV_0101, USB\VID_303A&PID_2987
+ProblemCode: 28
+DriverInfPath: 
+DriverProvider: 
+Service: 
+PowerShell Get-PnpDevice and properties: exit 0.

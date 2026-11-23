@@ -1,0 +1,4 @@
+out/esp32-p4x-v16-usb-display.zip: OK
+ESP32_P4_USB_Extended_Display_AGENT_TASK.md: OK
+All project documentation links resolve.
+Release, original task, shell syntax and upstream Git checks exit=0.

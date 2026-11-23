@@ -1,0 +1,281 @@
+Checking "python3" ...
+Python 3.11.15
+"python3" has been detected
+Activating ESP-IDF 5.4
+Setting IDF_PATH to '<project>/upstream/esp-idf-v5.4.4'.
+* Checking python version ... 3.11.15
+* Checking python dependencies ... OK
+* Deactivating the current ESP-IDF environment (if any) ... OK
+* Establishing a new ESP-IDF environment ... OK
+* Identifying shell ... bash
+* Detecting outdated tools in system ... Found tools that are not used by active ESP-IDF version.
+For removing old versions of xtensa-esp-elf, openocd-esp32, xtensa-esp-elf-gdb, riscv32-esp-elf-gdb use command 'python <project>/upstream/esp-idf-v5.4.4/tools/idf_tools.py uninstall'
+To free up even more space, remove installation packages of those tools.
+Use option python <project>/upstream/esp-idf-v5.4.4/tools/idf_tools.py uninstall --remove-archives.
+* Shell completion ... Autocompletion code generated
+
+Done! You can now compile ESP-IDF projects.
+Go to the project directory and run:
+
+  idf.py build
+bootloader/bootloader.bin: OK
+usb_touch_screen.bin: OK
+partition_table/partition-table.bin: OK
+flasher_args.json: OK
+flash_args: OK
+sdkconfig: OK
+usb_touch_screen.elf: OK
+esptool.py v4.14.0
+Serial port /dev/ttyACM0
+Connecting...
+Detecting chip type... ESP32-P4
+Chip is ESP32-P4 (revision v3.2)
+Features: High-Performance MCU
+Crystal is 40MHz
+USB mode: USB-Serial/JTAG
+MAC: <MAC>
+Using the new stub flasher.
+Uploading stub...
+Running stub...
+Stub running...
+Manufacturer: c8
+Device: 4018
+Detected flash size: 16MB
+Hard resetting via RTS pin...
+[Board Manager] Running global callback for tasks: flash, monitor
+[Board Manager] board_manager.defaults has higher priority than the project sdkconfig.defaults.
+[Board Manager] If a configuration does not take effect, inspect: components/gen_bmgr_codes/board_manager.defaults
+[Board Manager] SDKCONFIG_DEFAULTS set to: <project>/upstream/usb-display-work/examples/usb/device/usb_extend_screen/sdkconfig.defaults;<project>/upstream/usb-display-work/examples/usb/device/usb_extend_screen/components/gen_bmgr_codes/board_manager.defaults;<project>/firmware/sdkconfig.defaults;<project>/firmware/sdkconfig.defaults.display-only
+Executing action: flash
+Running ninja in directory <project>/out/display-only
+Executing "ninja flash"...
+[1/5] cd <project>/out/display-only/esp-idf/esptool_py && <project>/upstream/.idf-venv/bin/python <project>/upstream/esp-idf-v5.4.4/components/partition_table/check_sizes.py --offset 0x8000 partition --type app <project>/out/display-only/partition_table/partition-table.bin <project>/out/display-only/usb_touch_screen.bin
+usb_touch_screen.bin binary size 0x7bfc0 bytes. Smallest app partition is 0x100000 bytes. 0x84040 bytes (52%) free.
+[2/5] Performing build step for 'bootloader'
+[1/1] cd <project>/out/display-only/bootloader/esp-idf/esptool_py && <project>/upstream/.idf-venv/bin/python <project>/upstream/esp-idf-v5.4.4/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x2000 <project>/out/display-only/bootloader/bootloader.bin
+Bootloader binary size 0x5240 bytes. 0xdc0 bytes (14%) free.
+[2/3] cd <project>/upstream/esp-idf-v5.4.4/components/esptool_py && /usr/bin/cmake -D IDF_PATH=<project>/upstream/esp-idf-v5.4.4 -D "SERIAL_TOOL=<project>/upstream/.idf-venv/bin/python;;<project>/upstream/esp-idf-v5.4.4/components/esptool_py/esptool/esptool.py;--chip;esp32p4" -D "SERIAL_TOOL_ARGS=--before=default_reset;--after=hard_reset;write_flash;@flash_args" -D WORKING_DIRECTORY=<project>/out/display-only -P <project>/upstream/esp-idf-v5.4.4/components/esptool_py/run_serial_tool.cmake
+esptool.py --chip esp32p4 -p /dev/ttyACM0 -b 460800 --before=default_reset --after=hard_reset write_flash --flash_mode dio --flash_freq 80m --flash_size 16MB 0x2000 bootloader/bootloader.bin 0x10000 usb_touch_screen.bin 0x8000 partition_table/partition-table.bin
+esptool.py v4.14.0
+Serial port /dev/ttyACM0
+Connecting...
+Chip is ESP32-P4 (revision v3.2)
+Features: High-Performance MCU
+Crystal is 40MHz
+USB mode: USB-Serial/JTAG
+MAC: <MAC>
+Using the new stub flasher.
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00002000 to 0x00007fff...
+Flash will be erased from 0x00010000 to 0x0008bfff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+SHA digest in image updated
+Wrote 21056 bytes (13263 compressed) at 0x00002000 in 0.3 seconds (effective 618.1 kbit/s)...
+Hash of data verified.
+Wrote 507840 bytes (266423 compressed) at 0x00010000 in 2.7 seconds (effective 1486.2 kbit/s)...
+Hash of data verified.
+Wrote 3072 bytes (103 compressed) at 0x00008000 in 0.0 seconds (effective 3285.9 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+--- esp-idf-monitor 1.11.0 on /dev/ttyACM0 115200
+--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+Executing action: monitor
+Running idf_monitor in directory <project>/upstream/usb-display-work/examples/usb/device/usb_extend_screen
+Executing "<project>/upstream/.idf-venv/bin/python <project>/upstream/esp-idf-v5.4.4/tools/idf_monitor.py -p /dev/ttyACM0 -b 115200 --toolchain-prefix riscv32-esp-elf- --target esp32p4 --revision 300 --decode-panic backtrace <project>/out/display-only/usb_touch_screen.elf -m '<project>/upstream/.idf-venv/bin/python' '<project>/upstream/esp-idf-v5.4.4/tools/idf.py' '-B' '<project>/out/display-only' '-D' 'SDKCONFIG=<project>/out/display-only/sdkconfig' '-D' 'SDKCONFIG_DEFAULTS=sdkconfig.defaults;<project>/firmware/sdkconfig.defaults;<project>/firmware/sdkconfig.defaults.display-only' '-p' '/dev/ttyACM0'"...
+ESP-ROM:esp32p4-eco7-20260109
+Build:Jan  9 2026
+rst:0x17 (CHIP_USB_UART_RESET),boot:0xc (SPI_FAST_FLASH_BOOT)
+Core0 Saved PC:0x4000942e
+--- 0x4000942e: s_test_psram at /COMPONENT_ESP_PSRAM_DIR/esp_psram.c:573
+Core1 Saved PC:0x4fc0130e
+--- 0x4fc0130e: ets_ds_is_busy in ROM
+SPI mode:DIO, clock div:1
+load:0x4ffb60d0,len:0x1308
+load:0x4ffac2c0,len:0xd1c
+load:0x4ffaefc0,len:0x31c8
+entry 0x4ffac2c0
+W (26) pmu_param: hp_cali_dbias not burnt in efuse, use default.
+W (26) pmu_param: lp_cali_dbias not burnt in efuse, use default.
+W (106) pmu_pvt: blk_version is less than 2, pvt auto dbias init not supported in efuse.
+I (108) hex_psram: vendor id    : 0x0d (AP)
+I (108) hex_psram: Latency      : 0x01 (Fixed)
+I (108) hex_psram: DriveStr.    : 0x00 (25 Ohm)
+I (109) hex_psram: dev id       : 0x03 (generation 4)
+I (109) hex_psram: density      : 0x07 (256 Mbit)
+I (109) hex_psram: good-die     : 0x06 (Pass)
+I (110) hex_psram: SRF          : 0x02 (Slow Refresh)
+I (110) hex_psram: BurstType    : 0x00 ( Wrap)
+I (110) hex_psram: BurstLen     : 0x03 (2048 Byte)
+I (111) hex_psram: BitMode      : 0x01 (X16 Mode)
+I (111) hex_psram: Readlatency  : 0x04 (14 cycles@Fixed)
+I (111) hex_psram: DriveStrength: 0x00 (1/1)
+I (112) MSPI DQS: tuning success, best phase id is 0
+I (266) MSPI DQS: tuning success, best delayline id is 17
+I (266) esp_psram: Found 32MB PSRAM device
+I (267) esp_psram: Speed: 200MHz
+I (268) hex_psram: psram CS IO is dedicated
+I (268) cpu_start: Multicore app
+I (717) esp_psram: SPI SRAM memory test OK
+I (725) cpu_start: Pro cpu start user code
+I (725) cpu_start: cpu freq: 400000000 Hz
+I (726) app_init: Application information:
+I (726) app_init: Project name:     usb_touch_screen
+I (726) app_init: App version:      f721a40-dirty
+I (726) app_init: ELF file SHA256:  cb8c4add0...
+I (726) app_init: ESP-IDF:          v5.4.4
+I (726) efuse_init: Min chip rev:     v3.0
+I (727) efuse_init: Max chip rev:     v3.99 
+I (727) efuse_init: Chip rev:         v3.2
+I (727) heap_init: Initializing. RAM available for dynamic allocation:
+I (727) heap_init: At 4FF58DC0 len 00062200 (392 KiB): RETENT_RAM
+I (728) heap_init: At 4FFBAFC0 len 00004BF0 (18 KiB): RAM
+I (728) heap_init: At 501080D8 len 00000028 (0 KiB): RTCRAM
+I (728) heap_init: At 5010819C len 00007E64 (31 KiB): RTCRAM
+I (728) heap_init: At 30100238 len 00001DC8 (7 KiB): TCM
+I (729) esp_psram: Adding pool of 32768K of PSRAM memory to heap allocator
+I (729) spi_flash: detected chip: generic
+I (729) spi_flash: flash io: qio
+I (730) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (730) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (731) main_task: Started on CPU0
+I (732) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (732) main_task: Calling app_main()
+I (732) usb_extend_screen: USB extend screen example
+I (733) BOARD_MANAGER: Board Information:
+I (733) BOARD_MANAGER: =================
+I (733) BOARD_MANAGER: Name: esp32_p4_function_ev_board
+I (733) BOARD_MANAGER: Chip: esp32p4
+I (733) BOARD_MANAGER: Version: 1.0.0
+I (733) BOARD_MANAGER: Description: ESP32-P4-Function-EV-Board
+I (733) BOARD_MANAGER: Manufacturer: ESPRESSIF
+I (733) BOARD_MANAGER: =================
+
+
+I (734) DEV_DISPLAY_LCD: Initializing LCD display: display_lcd, chip: ek79007, sub_type: dsi
+I (734) DEV_DISPLAY_LCD_SUB_DSI: Initializing DSI LCD display: display_lcd, chip: ek79007
+I (734) PERIPH_LDO: LDO initialize success
+I (735) PERIPH_DSI: MIPI DSI bus initialize success
+I (735) ek79007: version: 1.0.4
+I (735) gpio: GPIO[27]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+E (892) lcd_panel: esp_lcd_panel_swap_xy(50): swap_xy is not supported by this panel
+W (892) DEV_DISPLAY_LCD: Failed to swap LCD panel XY: ESP_ERR_NOT_SUPPORTED
+E (892) lcd_panel: esp_lcd_panel_disp_on_off(71): disp_on_off is not supported by this panel
+I (892) DEV_DISPLAY_LCD: Successfully initialized LCD display: display_lcd (sub_type: dsi), panel: 0x4ff64848, io: 0x4ff647fc
+I (893) BOARD_MANAGER: Device display_lcd initialized
+I (893) BOARD_DEVICE: Device handle display_lcd found, Handle: 0x4ff64738 TO: 0x4ff64738
+I (893) BOARD_DEVICE: Device display_lcd config found: 0x40066c44 (size: 128)
+I (893) app_lcd: Board display: ek79007 (dsi), resolution=1024x600, framebuffer=RGB565_LE
+I (893) app_lcd: JPEG buffer: visible=1024x600, MCU-aligned capacity=1024x608
+I (925) app_lcd: LCD boot pattern submitted
+I (925) BOARD_PERIPH: Peripheral ledc_backlight config found: 0x400670f4 (size: 44)
+I (926) PERIPH_LEDC: LEDC initialized: speed_mode=0, channel=1, gpio=26, freq=4000Hz
+I (926) DEV_LEDC_CTRL: LEDC control device lcd_brightness initialized: channel=1, default_percent=100%, duty=8191
+I (926) BOARD_MANAGER: Device lcd_brightness initialized
+I (927) BOARD_DEVICE: Device handle lcd_brightness found, Handle: 0x4ff64e84 TO: 0x4ff64e84
+I (927) BOARD_DEVICE: Device lcd_brightness config found: 0x40066bcc (size: 16)
+I (927) BOARD_PERIPH: Peripheral ledc_backlight config found: 0x400670f4 (size: 44)
+I (927) usb_extend_screen: Reset reason=11, PSRAM heap total=33554432 free=28583320
+I (928) main_task: Returned from app_main()
+ESP-ROM:esp32p4-eco7-20260109
+Build:Jan  9 2026
+rst:0x17 (CHIP_USB_UART_RESET),boot:0xc (SPI_FAST_FLASH_BOOT)
+Core0 Saved PC:0x4ff44382
+--- 0x4ff44382: esp_cpu_wait_for_intr at /COMPONENT_ESP_HW_SUPPORT_DIR/cpu.c:57
+Core1 Saved PC:0x4ff44382
+--- 0x4ff44382: esp_cpu_wait_for_intr at /COMPONENT_ESP_HW_SUPPORT_DIR/cpu.c:57
+SPI mode:DIO, clock div:1
+load:0x4ffb60d0,len:0x1308
+load:0x4ffac2c0,len:0xd1c
+load:0x4ffaefc0,len:0x31c8
+entry 0x4ffac2c0
+W (6) pmu_param: hp_cali_dbias not burnt in efuse, use default.
+W (6) pmu_param: lp_cali_dbias not burnt in efuse, use default.
+W (77) pmu_pvt: blk_version is less than 2, pvt auto dbias init not supported in efuse.
+I (79) hex_psram: vendor id    : 0x0d (AP)
+I (79) hex_psram: Latency      : 0x01 (Fixed)
+I (79) hex_psram: DriveStr.    : 0x00 (25 Ohm)
+I (80) hex_psram: dev id       : 0x03 (generation 4)
+I (80) hex_psram: density      : 0x07 (256 Mbit)
+I (80) hex_psram: good-die     : 0x06 (Pass)
+I (80) hex_psram: SRF          : 0x02 (Slow Refresh)
+I (81) hex_psram: BurstType    : 0x00 ( Wrap)
+I (81) hex_psram: BurstLen     : 0x03 (2048 Byte)
+I (82) hex_psram: BitMode      : 0x01 (X16 Mode)
+I (82) hex_psram: Readlatency  : 0x04 (14 cycles@Fixed)
+I (82) hex_psram: DriveStrength: 0x00 (1/1)
+I (83) MSPI DQS: tuning success, best phase id is 0
+I (237) MSPI DQS: tuning success, best delayline id is 17
+I (237) esp_psram: Found 32MB PSRAM device
+I (237) esp_psram: Speed: 200MHz
+I (238) hex_psram: psram CS IO is dedicated
+I (239) cpu_start: Multicore app
+I (687) esp_psram: SPI SRAM memory test OK
+I (696) cpu_start: Pro cpu start user code
+I (696) cpu_start: cpu freq: 400000000 Hz
+I (696) app_init: Application information:
+I (697) app_init: Project name:     usb_touch_screen
+I (697) app_init: App version:      f721a40-dirty
+I (697) app_init: ELF file SHA256:  cb8c4add0...
+I (697) app_init: ESP-IDF:          v5.4.4
+I (697) efuse_init: Min chip rev:     v3.0
+I (697) efuse_init: Max chip rev:     v3.99 
+I (698) efuse_init: Chip rev:         v3.2
+I (698) heap_init: Initializing. RAM available for dynamic allocation:
+I (698) heap_init: At 4FF58DC0 len 00062200 (392 KiB): RETENT_RAM
+I (698) heap_init: At 4FFBAFC0 len 00004BF0 (18 KiB): RAM
+I (699) heap_init: At 501080D8 len 00000028 (0 KiB): RTCRAM
+I (699) heap_init: At 5010819C len 00007E64 (31 KiB): RTCRAM
+I (699) heap_init: At 30100238 len 00001DC8 (7 KiB): TCM
+I (699) esp_psram: Adding pool of 32768K of PSRAM memory to heap allocator
+I (700) spi_flash: detected chip: generic
+I (700) spi_flash: flash io: qio
+I (701) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (701) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (701) main_task: Started on CPU0
+I (702) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (702) main_task: Calling app_main()
+I (702) usb_extend_screen: USB extend screen example
+I (703) BOARD_MANAGER: Board Information:
+I (703) BOARD_MANAGER: =================
+I (703) BOARD_MANAGER: Name: esp32_p4_function_ev_board
+I (703) BOARD_MANAGER: Chip: esp32p4
+I (703) BOARD_MANAGER: Version: 1.0.0
+I (703) BOARD_MANAGER: Description: ESP32-P4-Function-EV-Board
+I (703) BOARD_MANAGER: Manufacturer: ESPRESSIF
+I (703) BOARD_MANAGER: =================
+
+
+I (704) DEV_DISPLAY_LCD: Initializing LCD display: display_lcd, chip: ek79007, sub_type: dsi
+I (704) DEV_DISPLAY_LCD_SUB_DSI: Initializing DSI LCD display: display_lcd, chip: ek79007
+I (704) PERIPH_LDO: LDO initialize success
+I (706) PERIPH_DSI: MIPI DSI bus initialize success
+I (706) ek79007: version: 1.0.4
+I (706) gpio: GPIO[27]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 
+E (863) lcd_panel: esp_lcd_panel_swap_xy(50): swap_xy is not supported by this panel
+W (863) DEV_DISPLAY_LCD: Failed to swap LCD panel XY: ESP_ERR_NOT_SUPPORTED
+E (863) lcd_panel: esp_lcd_panel_disp_on_off(71): disp_on_off is not supported by this panel
+I (863) DEV_DISPLAY_LCD: Successfully initialized LCD display: display_lcd (sub_type: dsi), panel: 0x4ff64848, io: 0x4ff647fc
+I (864) BOARD_MANAGER: Device display_lcd initialized
+I (864) BOARD_DEVICE: Device handle display_lcd found, Handle: 0x4ff64738 TO: 0x4ff64738
+I (864) BOARD_DEVICE: Device display_lcd config found: 0x40066c44 (size: 128)
+I (864) app_lcd: Board display: ek79007 (dsi), resolution=1024x600, framebuffer=RGB565_LE
+I (864) app_lcd: JPEG buffer: visible=1024x600, MCU-aligned capacity=1024x608
+I (896) app_lcd: LCD boot pattern submitted
+I (896) BOARD_PERIPH: Peripheral ledc_backlight config found: 0x400670f4 (size: 44)
+I (897) PERIPH_LEDC: LEDC initialized: speed_mode=0, channel=1, gpio=26, freq=4000Hz
+I (897) DEV_LEDC_CTRL: LEDC control device lcd_brightness initialized: channel=1, default_percent=100%, duty=8191
+I (897) BOARD_MANAGER: Device lcd_brightness initialized
+I (897) BOARD_DEVICE: Device handle lcd_brightness found, Handle: 0x4ff64e84 TO: 0x4ff64e84
+I (898) BOARD_DEVICE: Device lcd_brightness config found: 0x40066bcc (size: 16)
+I (898) BOARD_PERIPH: Peripheral ledc_backlight config found: 0x400670f4 (size: 44)
+I (898) usb_extend_screen: Reset reason=11, PSRAM heap total=33554432 free=28583320
+I (899) main_task: Returned from app_main()
+
+Done

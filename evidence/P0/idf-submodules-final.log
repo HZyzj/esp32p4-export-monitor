@@ -1,0 +1,10 @@
+Submodule 'third_party/mbedtls/repo' (https://github.com/Mbed-TLS/mbedtls.git) registered for path 'components/openthread/openthread/third_party/mbedtls/repo'
+Cloning into '/home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/components/openthread/openthread/third_party/mbedtls/repo'...
+From https://github.com/Mbed-TLS/mbedtls
+ * branch            e185d7fd85499c8ce5ca2a54f5cf8fe7dbe3f8df -> FETCH_HEAD
+Submodule path 'components/openthread/openthread/third_party/mbedtls/repo': checked out 'e185d7fd85499c8ce5ca2a54f5cf8fe7dbe3f8df'
+Submodule 'framework' (https://github.com/Mbed-TLS/mbedtls-framework) registered for path 'components/openthread/openthread/third_party/mbedtls/repo/framework'
+Cloning into '/home/yzj/project/esp32p4-mon/upstream/esp-idf-v5.4.4/components/openthread/openthread/third_party/mbedtls/repo/framework'...
+From https://github.com/Mbed-TLS/mbedtls-framework
+ * branch            457996474728cb8e968ed21953b72f74d2f536b2 -> FETCH_HEAD
+Submodule path 'components/openthread/openthread/third_party/mbedtls/repo/framework': checked out '457996474728cb8e968ed21953b72f74d2f536b2'

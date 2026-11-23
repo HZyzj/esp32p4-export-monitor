@@ -1,0 +1,73 @@
+
+7-Zip [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 (locale=C.UTF-8,Utf16=on,HugeFiles=on,64 bits,20 CPUs Intel(R) Core(TM) i5-14500 (B06F2),ASM,AES-NI)
+
+Scanning the drive for archives:
+1 file, 2325552 bytes (2272 KiB)
+
+Listing archive: /tmp/p4-usb-driver.exe
+
+--
+Path = /tmp/p4-usb-driver.exe
+Type = PE
+Physical Size = 2325552
+CPU = x64
+64-bit = +
+Characteristics = Executable LargeAddress
+Created = 2024-05-12 18:17:07
+Headers Size = 1024
+Checksum = 2348202
+Image Size = 503808
+Section Alignment = 4096
+File Alignment = 512
+Code Size = 288768
+Initialized Data Size = 139776
+Uninitialized Data Size = 0
+Linker Version = 14.33
+OS Version = 5.2
+Image Version = 0.0
+Subsystem Version = 5.2
+Subsystem = Windows GUI
+DLL Characteristics = Relocated NX-Compatible TerminalServerAware 0x4020
+Stack Reserve = 1048576
+Stack Commit = 4096
+Heap Reserve = 1048576
+Heap Commit = 4096
+Image Base = 5368709120
+----
+Path = [0]
+Size = 1873192
+Packed Size = 1873192
+Virtual Size = 1873192
+Offset = 429568
+--
+Path = [0]
+Type = Rar5
+Physical Size = 1873190
+Tail Size = 2
+Characteristics = Recovery
+Solid = -
+Blocks = 6
+Encrypted = -
+Multivolume = -
+Volumes = 1
+Comment = ;下面的注释包含自解压脚本命令
+
+Path=%TEMP%
+Setup=PikachuTestCert.exe /SILENT
+Setup=dpinst.exe
+TempMode
+Silent=1
+Overwrite=1
+
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2025-02-25 19:50:41 ....A        23558        14083  dpinst.exe(100).ico
+2025-02-25 19:40:14 ....A      1797736      1248066  PikachuTestCert.exe
+2025-02-24 14:07:04 ....A       462400       124375  xfz1986_usb_graphic.dll
+2025-02-24 14:07:00 ....A         4354         1218  xfz1986_usb_graphic.inf
+2024-12-18 21:24:53 ....A      1063176       353355  dpinst.exe
+2025-02-25 20:07:42 ....A         9240         5602  xfz1986_usb_graphic.cat
+------------------- ----- ------------ ------------  ------------------------
+2025-02-25 20:07:42            3360464      1746699  6 files
